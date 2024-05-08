@@ -7,7 +7,7 @@ plugins {
 
 android {
     defaultConfig {
-        applicationId "com.taekwondo.taekwondoapp"
+        applicationId "com.taekwondo.taekwondo"
         versionCode 1
         versionName "1.0.0"
     }
@@ -45,6 +45,7 @@ dependencies {
     implementation project(":core-data")
     implementation project(":core-navigation")
     implementation project(":core-ui")
+    implementation project(":feature-auth")
 
     implementation(core)
     implementation(activity)
@@ -56,6 +57,4 @@ dependencies {
     implementation(hiltNavigation)
 
     implementation(dataStore)
-    implementation(room)
-    kapt(roomKapt)
 }

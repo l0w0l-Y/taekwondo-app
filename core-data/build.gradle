@@ -26,8 +26,12 @@ dependencies {
     implementation(loggingInterceptor)
 
     implementation(hiltDep)
-    implementation(hiltKapt)
+    implementation project(':core-common')
+    kapt(hiltKapt)
 
     implementation(serialization)
     implementation(dataStore)
+
+    implementation(room)
+    kapt(roomKapt)
 }

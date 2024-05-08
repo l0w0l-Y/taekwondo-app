@@ -59,12 +59,30 @@ suspend fun <Prev, New> Effect<Prev>.map(call: suspend (Prev?) -> New): Effect<N
     }
 }
 
+suspend fun <Prev, New> Effect<Prev>.mapEffect(call: suspend (Prev?) -> Effect<New>): Effect<New> {
+    return when (this) {
+        is Error -> Error(this.exception)
+        is Success -> call(this.data)
+    }
+}
+
 suspend fun tryCatch(
     dispatcher: CoroutineDispatcher, call: suspend () -> Unit
 ): Effect<Completable> = withContext(dispatcher) {
     try {
         call()
         Success(Completable)
+    } catch (exception: Exception) {
+        Error(exception)
+    }
+}
+
+suspend fun <R> callDB(
+    dispatcher: CoroutineDispatcher,
+    call: suspend () -> R
+): Effect<R> = withContext(dispatcher) {
+    try {
+        Success(call())
     } catch (exception: Exception) {
         Error(exception)
     }

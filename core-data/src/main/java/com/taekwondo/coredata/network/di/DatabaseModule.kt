@@ -1,7 +1,10 @@
 package com.taekwondo.coredata.network.di
 
 import android.content.Context
+import androidx.room.Room
+import com.taekwondo.coredata.network.dao.AuthDao
 import com.taekwondo.coredata.network.database.DataStoreProvider
+import com.taekwondo.coredata.network.database.Database
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,4 +22,20 @@ class DatabaseModule {
         @ApplicationContext context: Context,
         @IoDispatcher dispatcher: CoroutineDispatcher
     ): DataStoreProvider = DataStoreProvider(context, dispatcher)
+
+    @Provides
+    fun provideDatabase(
+        @ApplicationContext context: Context
+    ): Database {
+        return Room.databaseBuilder(
+            context,
+            Database::class.java,
+            "taekwondo_database"
+        ).build()
+    }
+
+    @Provides
+    fun provideYourDao(database: Database): AuthDao {
+        return database.authDao()
+    }
 }

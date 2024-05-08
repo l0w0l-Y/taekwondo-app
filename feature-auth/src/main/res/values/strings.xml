@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cd_hide_password">Спрятать пароль</string>
+    <string name="cd_show_password">Показать пароль</string>
+    <string name="button_login">Войти</string>
+    <string name="text_field_password">Пароль</string>
+    <string name="text_field_email">Почта</string>
+    <string name="text_field_name">Имя</string>
+    <string name="text_field_surname">Фамилия</string>
+    <string name="button_register">Зарегистрироваться</string>
+</resources>

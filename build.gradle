@@ -25,6 +25,7 @@ buildscript {
         composePreview = "androidx.compose.ui:ui-tooling-preview:$compose_version"
         composeRuntime = "androidx.compose.runtime:runtime:$compose_runtime_version"
         composeTooling = "androidx.compose.ui:ui-tooling:$compose_version"
+        material = "androidx.compose.material:material:$material_version"
         material3 = "androidx.compose.material3:material3:$material3_version"
         activity = "androidx.activity:activity-compose:$activity_version"
         navigation = "androidx.navigation:navigation-compose:$navigation_version"
