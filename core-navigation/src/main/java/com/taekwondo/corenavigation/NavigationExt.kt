@@ -16,7 +16,7 @@ fun NavController.navigate(direction: Direction, builder: (NavOptionsBuilder.() 
     }
 }
 
-fun NavController.navigateWithArgs(direction: Direction,  vararg args: Any, builder: (NavOptionsBuilder.() -> Unit) = {}){
+fun NavController.navigateWithArgs(direction: Direction, vararg args: Any, builder: (NavOptionsBuilder.() -> Unit) = {}){
     try {
         val gson = Gson()
         val json: String = gson.toJson(args)

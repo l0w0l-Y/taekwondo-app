@@ -1,7 +1,7 @@
 package com.taekwondo.coredata.network.interceptors
 
 import com.taekwondo.coredata.network.database.DataStoreProvider
-import com.taekwondo.coredata.network.database.TOKEN_KEY
+import com.taekwondo.coredata.network.database.UID_KEY
 import com.taekwondo.coredata.network.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -18,12 +18,12 @@ class AuthInterceptor @Inject constructor(
     @ApplicationScope mainScope: CoroutineScope
 ) : Interceptor {
 
-    private var token = ""
+    private var token = 0
 
     init {
-        dataStore.get(TOKEN_KEY)
+        dataStore.get(UID_KEY)
             .distinctUntilChanged()
-            .onEach { token = it ?: "" }
+            .onEach { token = it ?: 0 }
             .launchIn(mainScope)
     }
 

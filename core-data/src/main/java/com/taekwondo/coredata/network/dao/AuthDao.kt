@@ -12,6 +12,6 @@ interface AuthDao {
     @Insert
     fun insert(entity: UserEntity)
 
-    @Query("SELECT * FROM userentity WHERE email LIKE :email LIMIT 1")
+    @Query("SELECT * FROM user WHERE email LIKE :email LIMIT 1")
     fun getUserByEmail(email: String): UserEntity?
 }

@@ -7,7 +7,7 @@ import retrofit2.Response
 
 sealed class Effect<out T>
 data class Success<T>(val data: T) : Effect<T>()
-data class Error<T>(val exception: Exception, val message: String = "") : Effect<T>()
+data class Error<T>(val exception: Exception? = null, val message: String = "") : Effect<T>()
 
 object Completable
 

@@ -1,5 +1,5 @@
 package com.taekwondo.coredata.network.database
 
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 
-val TOKEN_KEY = stringPreferencesKey("token")
+val UID_KEY = intPreferencesKey("uid")

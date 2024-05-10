@@ -3,10 +3,11 @@ package com.taekwondo.featureauth.presentation.register
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.taekwondo.corecommon.ext.EventChannel
-import com.taekwondo.corecommon.ext.debug
+import com.taekwondo.corecommon.ext.ResourcesProvider
 import com.taekwondo.coredata.network.doOnError
 import com.taekwondo.coredata.network.doOnSuccess
-import com.taekwondo.coredata.network.repository.AuthRepository
+import com.taekwondo.featureauth.R
+import com.taekwondo.featureauth.domain.AuthInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -14,27 +15,35 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val repository: AuthRepository,
+    private val interactor: AuthInteractor,
+    private val resourcesProvider: ResourcesProvider
 ) : ViewModel() {
 
     sealed class State
     object NavigateMainState : State()
+    class ErrorState(val message: String) : State()
 
     val event = EventChannel<State>()
     fun onRegister(
         name: String,
-        surname: String,
+        username: String,
         email: String,
         password: String,
+        phone: String,
+        photo: String?
     ) {
         viewModelScope.launch {
-            repository.register(name, surname, email, password)
-                .doOnSuccess {
-                    event.send(NavigateMainState)
-                }
-                .doOnError {
-                    debug(it)
-                }
+            if (name == "" || username == "" || email == "" || password == "" || phone == "" || photo == null) {
+                event.send(ErrorState(message = resourcesProvider.getString(R.string.error_field_required)))
+            } else {
+                interactor.register(name, username, email, password, phone, photo)
+                    .doOnSuccess {
+                        event.send(NavigateMainState)
+                    }
+                    .doOnError {
+                        event.send(ErrorState(message = resourcesProvider.getString(R.string.error_field_required)))
+                    }
+            }
         }
     }
 }

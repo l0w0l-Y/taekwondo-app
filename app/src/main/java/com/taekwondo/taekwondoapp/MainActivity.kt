@@ -6,12 +6,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.kaleksandra.featurefighter.presentation.CreateFighterScreen
+import com.kaleksandra.featurefighter.presentation.CreateFighterViewModel
+import com.kaleksandra.featuremain.presentation.MainScreen
 import com.taekwondo.corenavigation.AuthDirection
+import com.taekwondo.corenavigation.CreateFighterDirection
 import com.taekwondo.corenavigation.MainDirection
+import com.taekwondo.corenavigation.ReadFighterDirection
 import com.taekwondo.corenavigation.RegisterDirection
+import com.taekwondo.corenavigation.UpdateFighterDirection
 import com.taekwondo.coretheme.AppTheme
 import com.taekwondo.featureauth.presentation.auth.AuthScreen
 import com.taekwondo.featureauth.presentation.register.RegisterScreen
@@ -26,19 +37,48 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 Scaffold {
-                    //TODO: Заменить на реальную логику авторизации
-                    val isAuthorized = false
-                    val startDestination =
-                        if (isAuthorized) MainDirection.path else AuthDirection.path
-                    val navController = rememberNavController()
-                    Scaffold {
-                        NavHost(
-                            navController = navController,
-                            startDestination = startDestination,
-                        ) {
-                            composable(MainDirection.path) { AuthScreen(navController = navController) }
-                            composable(AuthDirection.path) { AuthScreen(navController = navController) }
-                            composable(RegisterDirection.path) { RegisterScreen(navController = navController) }
+                    val viewModel: MainViewModel = hiltViewModel()
+                    val isAuthorized by viewModel.isAuthorized.collectAsState()
+                    isAuthorized?.let {
+                        val startDestination = if (it) MainDirection.path else AuthDirection.path
+                        val navController = rememberNavController()
+                        Scaffold {
+                            NavHost(
+                                navController = navController,
+                                startDestination = startDestination,
+                            ) {
+                                composable(MainDirection.path) { MainScreen(navController = navController) }
+                                composable(AuthDirection.path) { AuthScreen(navController = navController) }
+                                composable(RegisterDirection.path) { RegisterScreen(navController = navController) }
+                                composable(CreateFighterDirection.path) {
+                                    CreateFighterScreen(
+                                        navController = navController,
+                                        navigationState = CreateFighterViewModel.Create
+                                    )
+                                }
+                                composable(
+                                    UpdateFighterDirection.path + "?uid={uid}",
+                                    arguments = listOf(navArgument("uid") {
+                                        type = NavType.IntType
+                                    })
+                                ) {
+                                    CreateFighterScreen(
+                                        navController = navController,
+                                        navigationState = CreateFighterViewModel.Update
+                                    )
+                                }
+                                composable(
+                                    ReadFighterDirection.path + "?uid={uid}",
+                                    arguments = listOf(
+                                        navArgument("uid") { type = NavType.IntType },
+                                    )
+                                ) {
+                                    CreateFighterScreen(
+                                        navController = navController,
+                                        navigationState = CreateFighterViewModel.Read
+                                    )
+                                }
+                            }
                         }
                     }
                 }

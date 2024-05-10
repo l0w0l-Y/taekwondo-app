@@ -9,25 +9,29 @@ interface AuthInteractor {
     suspend fun auth(email: String, password: String): Effect<Completable>
     suspend fun register(
         name: String,
-        surname: String,
+        username: String,
         email: String,
         password: String,
+        phone: String,
+        photo: String
     ): Effect<Unit>
 }
 
 class AuthInteractorImpl @Inject constructor(
     private val authRepository: AuthRepository,
-) : AuthRepository {
+) : AuthInteractor {
     override suspend fun auth(email: String, password: String): Effect<Completable> {
         return authRepository.auth(email, password)
     }
 
     override suspend fun register(
         name: String,
-        surname: String,
+        username: String,
         email: String,
         password: String,
+        phone: String,
+        photo: String
     ): Effect<Unit> {
-        return authRepository.register(name, surname, email, password)
+        return authRepository.register(name, username, email, password, phone, photo)
     }
 }

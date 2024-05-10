@@ -45,6 +45,7 @@ buildscript {
         coil = "io.coil-kt:coil-compose:$coil_version"
         room = "androidx.room:room-runtime:$room_version"
         roomKapt = "androidx.room:room-compiler:$room_version"
+        permissions = "com.google.accompanist:accompanist-permissions:$accompanist_version"
     }
 }
 

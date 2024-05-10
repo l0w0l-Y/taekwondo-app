@@ -5,7 +5,9 @@ plugins {
 
 dependencies {
     implementation project(":core-theme")
+
     implementation(core)
+    implementation(activity)
 
     implementation(composeUi)
     implementation(composePreview)
@@ -13,6 +15,10 @@ dependencies {
     debugImplementation(composeTooling)
 
     implementation(material3)
+    implementation(material)
+    implementation(coil)
+
+    implementation(permissions)
 }
 
 android {
