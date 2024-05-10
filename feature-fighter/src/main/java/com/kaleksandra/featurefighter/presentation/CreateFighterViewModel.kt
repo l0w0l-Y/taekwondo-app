@@ -28,6 +28,7 @@ class CreateFighterViewModel @Inject constructor(
 
     sealed class State
     object NavigateMainState : State()
+    object ErrorState : State()
     class UpdateFighterState(
         val uid: Int = 0,
         val name: String,
@@ -86,16 +87,20 @@ class CreateFighterViewModel @Inject constructor(
         photo: String?,
     ) {
         viewModelScope.launch {
-            if (uid != null) {
-                interactor.updateFighter(uid, name, age, weight, height, weightCategory, photo)
-                    .doOnSuccess {
-                        event.send(NavigateMainState)
-                    }
+            if (name.isEmpty() || age == 0f || weight == 0f || height == 0f || weightCategory.isEmpty()) {
+                event.send(ErrorState)
             } else {
-                interactor.createFighter(name, age, weight, height, weightCategory, photo)
-                    .doOnSuccess {
-                        event.send(NavigateMainState)
-                    }
+                if (uid != null) {
+                    interactor.updateFighter(uid, name, age, weight, height, weightCategory, photo)
+                        .doOnSuccess {
+                            event.send(NavigateMainState)
+                        }
+                } else {
+                    interactor.createFighter(name, age, weight, height, weightCategory, photo)
+                        .doOnSuccess {
+                            event.send(NavigateMainState)
+                        }
+                }
             }
         }
     }

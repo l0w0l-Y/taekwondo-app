@@ -48,6 +48,7 @@ dependencies {
     implementation project(":feature-auth")
     implementation project(":feature-main")
     implementation project(":feature-fighter")
+    implementation project(":feature-event")
 
     implementation(core)
     implementation(activity)

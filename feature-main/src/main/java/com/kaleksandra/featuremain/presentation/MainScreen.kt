@@ -2,9 +2,11 @@ package com.kaleksandra.featuremain.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -19,6 +21,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -43,6 +46,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 @Composable
 fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     val fighters by viewModel.fighters.collectAsState()
+    val events by viewModel.events.collectAsState()
     val event = viewModel.event.receiveAsFlow()
     event.observe {
         when (it) {
@@ -57,7 +61,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltView
     }
     MainScreen(
         fighters = fighters,
-        events = emptyList(),
+        events = events,
         { navController.navigate(CreateFighterDirection) },
         { navController.navigate(CreateEventDirection) },
         { uid -> navController.navigate("${ReadFighterDirection.path}?uid=$uid") },
@@ -78,11 +82,13 @@ fun MainScreen(
             .fillMaxSize()
             .padding(top = Dimen.padding_12, start = Dimen.padding_16, end = Dimen.padding_16)
     ) {
-        TextButton(onClick = logOut) {
-            Text(
-                text = string(id = R.string.button_log_out),
-                style = MaterialTheme.typography.bodyMedium
-            )
+        Box(modifier = Modifier.fillMaxWidth()) {
+            TextButton(onClick = logOut, modifier = Modifier.align(Alignment.TopEnd)) {
+                Text(
+                    text = string(id = R.string.button_log_out),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(Dimen.padding_2)) {
             Button(onClick = createFighter) {
@@ -144,7 +150,7 @@ fun MainScreen(
             LazyColumn(modifier = Modifier.padding(top = Dimen.padding_12)) {
                 items(events) {
                     Text(text = it.name, modifier = Modifier.clickable {
-                        updateFighter(it.uid)
+                       //TODO: Добавить открытие соревнования
                     })
                 }
             }

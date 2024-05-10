@@ -10,4 +10,5 @@
     <string name="button_delete">Удалить</string>
     <string name="button_save">Сохранить</string>
     <string name="button_update">Изменить</string>
+    <string name="error_field_required">Необходимо заполнить все поля</string>
 </resources>

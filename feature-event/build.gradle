@@ -1,0 +1,36 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'com.taekwondo.featureevent'
+}
+
+dependencies {
+    implementation project(":core-theme")
+    implementation project(":core-common")
+    implementation project(":core-data")
+    implementation project(":core-navigation")
+    implementation project(":core-ui")
+
+    implementation(core)
+
+    implementation(composeUi)
+    implementation(composePreview)
+    implementation(composeRuntime)
+    implementation 'androidx.compose.material3:material3-android:1.2.1'
+    debugImplementation(composeTooling)
+    implementation(composeIcon)
+
+    implementation(lifecycleViewmodel)
+
+    implementation(hiltDep)
+    implementation(hiltNavigation)
+    kapt(hiltKapt)
+
+    implementation(dataStore)
+    implementation(material)
+    implementation(coil)
+}

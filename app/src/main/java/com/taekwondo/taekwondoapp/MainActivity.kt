@@ -18,6 +18,7 @@ import com.kaleksandra.featurefighter.presentation.CreateFighterScreen
 import com.kaleksandra.featurefighter.presentation.CreateFighterViewModel
 import com.kaleksandra.featuremain.presentation.MainScreen
 import com.taekwondo.corenavigation.AuthDirection
+import com.taekwondo.corenavigation.CreateEventDirection
 import com.taekwondo.corenavigation.CreateFighterDirection
 import com.taekwondo.corenavigation.MainDirection
 import com.taekwondo.corenavigation.ReadFighterDirection
@@ -26,6 +27,7 @@ import com.taekwondo.corenavigation.UpdateFighterDirection
 import com.taekwondo.coretheme.AppTheme
 import com.taekwondo.featureauth.presentation.auth.AuthScreen
 import com.taekwondo.featureauth.presentation.register.RegisterScreen
+import com.taekwondo.featureevent.presentation.EventScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -77,6 +79,9 @@ class MainActivity : ComponentActivity() {
                                         navController = navController,
                                         navigationState = CreateFighterViewModel.Read
                                     )
+                                }
+                                composable(CreateEventDirection.path) {
+                                    EventScreen(navController = navController)
                                 }
                             }
                         }

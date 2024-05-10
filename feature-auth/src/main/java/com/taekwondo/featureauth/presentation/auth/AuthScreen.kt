@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -83,8 +84,10 @@ fun AuthScreen(onSaveClick: (String, String) -> Unit, onRegisterClick: () -> Uni
             modifier = Modifier.padding(top = Dimen.padding_36),
             singleLine = true,
             shape = RoundedCornerShape(Dimen.padding_16),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            keyboardActions = KeyboardActions(KeyboardActions.Default.onNext)
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            ),
         )
         OutlinedTextField(
             value = password,

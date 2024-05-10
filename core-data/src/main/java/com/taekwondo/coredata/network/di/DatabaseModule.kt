@@ -3,6 +3,7 @@ package com.taekwondo.coredata.network.di
 import android.content.Context
 import androidx.room.Room
 import com.taekwondo.coredata.network.dao.AuthDao
+import com.taekwondo.coredata.network.dao.EventDao
 import com.taekwondo.coredata.network.dao.FighterDao
 import com.taekwondo.coredata.network.database.DataStoreProvider
 import com.taekwondo.coredata.network.database.Database
@@ -43,5 +44,10 @@ class DatabaseModule {
     @Provides
     fun provideFighterDao(database: Database): FighterDao {
         return database.fighterDao()
+    }
+
+    @Provides
+    fun provideEventDao(database: Database): EventDao {
+        return database.eventDao()
     }
 }

@@ -2,6 +2,8 @@ package com.taekwondo.coredata.network.di
 
 import com.taekwondo.coredata.network.repository.AuthRepository
 import com.taekwondo.coredata.network.repository.AuthRepositoryImpl
+import com.taekwondo.coredata.network.repository.EventRepository
+import com.taekwondo.coredata.network.repository.EventRepositoryImpl
 import com.taekwondo.coredata.network.repository.FighterRepository
 import com.taekwondo.coredata.network.repository.FighterRepositoryImpl
 import com.taekwondo.coredata.network.repository.MainRepository
@@ -26,4 +28,8 @@ interface RepositoryModule {
     @Binds
     @ViewModelScoped
     fun provideMainRepository(impl: MainRepositoryImpl): MainRepository
+
+    @Binds
+    @ViewModelScoped
+    fun provideEventRepository(impl: EventRepositoryImpl): EventRepository
 }
