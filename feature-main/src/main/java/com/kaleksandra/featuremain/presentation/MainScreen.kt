@@ -1,5 +1,6 @@
 package com.kaleksandra.featuremain.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,7 +39,6 @@ import com.taekwondo.corenavigation.CreateEventDirection
 import com.taekwondo.corenavigation.CreateFighterDirection
 import com.taekwondo.corenavigation.ReadEventDirection
 import com.taekwondo.corenavigation.ReadFighterDirection
-import com.taekwondo.corenavigation.UpdateFighterDirection
 import com.taekwondo.corenavigation.navigate
 import com.taekwondo.coretheme.Dimen
 import com.taekwondo.coreui.compose.string
@@ -85,7 +85,7 @@ fun MainScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = Dimen.padding_12, start = Dimen.padding_16, end = Dimen.padding_16)
+            .padding(vertical = Dimen.padding_12, horizontal = Dimen.padding_16)
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             TextButton(onClick = logOut, modifier = Modifier.align(Alignment.TopEnd)) {
@@ -152,11 +152,26 @@ fun MainScreen(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = Dimen.padding_20)
             )
-            LazyColumn(modifier = Modifier.padding(top = Dimen.padding_12)) {
+            LazyColumn(
+                modifier = Modifier.padding(top = Dimen.padding_12),
+                verticalArrangement = Arrangement.spacedBy(Dimen.padding_4)
+            ) {
                 items(events) {
-                    Text(text = it.name, modifier = Modifier.clickable {
-                        onOpenEvent(it.uid)
-                    })
+                    Text(
+                        text = it.name,
+                        modifier = Modifier
+                            .background(
+                                MaterialTheme.colorScheme.surface,
+                                RoundedCornerShape(Dimen.radius_8)
+                            )
+                            .clip(RoundedCornerShape(Dimen.radius_8))
+                            .clickable {
+                                onOpenEvent(it.uid)
+                            }
+                            .padding(Dimen.padding_12)
+                            .fillMaxWidth()
+
+                    )
                 }
             }
         }

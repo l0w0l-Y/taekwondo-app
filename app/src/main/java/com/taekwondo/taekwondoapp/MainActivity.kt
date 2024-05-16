@@ -24,6 +24,7 @@ import com.taekwondo.corenavigation.MainDirection
 import com.taekwondo.corenavigation.ReadEventDirection
 import com.taekwondo.corenavigation.ReadFighterDirection
 import com.taekwondo.corenavigation.RegisterDirection
+import com.taekwondo.corenavigation.UpdateEventDirection
 import com.taekwondo.corenavigation.UpdateEventFighterDirection
 import com.taekwondo.corenavigation.UpdateFighterDirection
 import com.taekwondo.coretheme.AppTheme
@@ -32,6 +33,7 @@ import com.taekwondo.featureauth.presentation.register.RegisterScreen
 import com.taekwondo.featureevent.presentation.event.EventScreen
 import com.taekwondo.featureevent.presentation.fighters.UpdateEventFighterScreen
 import com.taekwondo.featureevent.presentation.update.CreateEventScreen
+import com.taekwondo.featureevent.presentation.update.CreateEventViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -92,10 +94,31 @@ class MainActivity : ComponentActivity() {
                                 ) {
                                     EventScreen(navController = navController)
                                 }
-                                composable(CreateEventDirection.path) {
-                                    CreateEventScreen(navController = navController)
+                                composable(
+                                    CreateEventDirection.path,
+                                ) {
+                                    CreateEventScreen(
+                                        navController = navController,
+                                        navigationState = CreateEventViewModel.Create
+                                    )
                                 }
-                                composable(UpdateEventFighterDirection.path){
+                                composable(
+                                    UpdateEventDirection.path + "?uid={uid}",
+                                    arguments = listOf(
+                                        navArgument("uid") { type = NavType.IntType },
+                                    )
+                                ) {
+                                    CreateEventScreen(
+                                        navController = navController,
+                                        navigationState = CreateEventViewModel.Update
+                                    )
+                                }
+                                composable(
+                                    UpdateEventFighterDirection.path + "?uid={uid}",
+                                    arguments = listOf(
+                                        navArgument("uid") { type = NavType.IntType },
+                                    )
+                                ) {
                                     UpdateEventFighterScreen(navController = navController)
                                 }
                             }

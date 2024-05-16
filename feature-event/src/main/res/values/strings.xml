@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="button_save_event">Создать соревнование</string>
+    <string name="button_update_event">Изменить соревнование</string>
     <string name="text_field_event_name">Название соревнования</string>
     <string name="text_field_event_date">Дата проведения</string>
     <string name="text_field_event_place">Место проведения</string>

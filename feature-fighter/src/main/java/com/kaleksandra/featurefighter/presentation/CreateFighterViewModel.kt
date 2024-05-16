@@ -45,7 +45,6 @@ class CreateFighterViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             if (uid != null) {
-                debug("uid: $uid")
                 interactor.getFighter(uid)
                     .doOnSuccess {
                         event.send(
@@ -80,14 +79,14 @@ class CreateFighterViewModel @Inject constructor(
 
     fun onSaveClick(
         name: String,
-        age: Float,
-        weight: Float,
-        height: Float,
+        age: Float?,
+        weight: Float?,
+        height: Float?,
         weightCategory: String,
         photo: String?,
     ) {
         viewModelScope.launch {
-            if (name.isEmpty() || age == 0f || weight == 0f || height == 0f || weightCategory.isEmpty()) {
+            if (name.isEmpty() || age == null || weight == null || height == null || weightCategory.isEmpty() || photo == null) {
                 event.send(ErrorState)
             } else {
                 if (uid != null) {

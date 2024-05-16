@@ -3,6 +3,7 @@ package com.taekwondo.featureevent.presentation.event
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.taekwondo.corecommon.ext.EventChannel
 import com.taekwondo.coredata.network.doOnSuccess
 import com.taekwondo.featureevent.domain.EventInteractor
 import com.taekwondo.featureevent.presentation.model.EventModel
@@ -19,14 +20,32 @@ class EventViewModel @Inject constructor(
 ) : ViewModel() {
     private val uid = checkNotNull(savedStateHandle.get<Int>("uid"))
 
-    private val _event = MutableStateFlow<EventModel?>(null)
-    val event: StateFlow<EventModel?> = _event
+    private val _eventModel = MutableStateFlow<EventModel?>(null)
+    val eventModel: StateFlow<EventModel?> = _eventModel
+
+    val event = EventChannel<State>()
+
+    sealed class State
+    class NavigateUpdateParticipantsState(val uid: Int) : State()
+    class NavigateUpdateEventState(val uid: Int) : State()
 
     init {
         viewModelScope.launch {
             interactor.getEventModel(uid).doOnSuccess {
-                _event.emit(it)
+                _eventModel.emit(it)
             }
+        }
+    }
+
+    fun updateParticipants() {
+        viewModelScope.launch {
+            event.send(NavigateUpdateParticipantsState(uid))
+        }
+    }
+
+    fun onUpdateEvent(){
+        viewModelScope.launch {
+            event.send(NavigateUpdateEventState(uid))
         }
     }
 }

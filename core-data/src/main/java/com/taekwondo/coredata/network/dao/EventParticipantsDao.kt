@@ -2,6 +2,7 @@ package com.taekwondo.coredata.network.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.taekwondo.coredata.network.entity.EventFighterCrossRef
@@ -14,9 +15,14 @@ interface EventParticipantsDao {
     @Query("SELECT * FROM event WHERE eventId = :eventId")
     fun getEventParticipants(eventId: Int): EventParticipants?
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEventJudgeCrossRef(crossRef: EventJudgeCrossRef)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEventFighterCrossRef(crossRef: EventFighterCrossRef)
+
+    @Query("DELETE FROM eventfightercrossref WHERE eventId = :eventId")
+    fun removeEventFighterCrossRef(eventId: Int)
+    @Query("DELETE FROM eventjudgecrossref WHERE eventId = :eventId")
+    fun removeEventJudgeCrossRef(eventId: Int)
 }

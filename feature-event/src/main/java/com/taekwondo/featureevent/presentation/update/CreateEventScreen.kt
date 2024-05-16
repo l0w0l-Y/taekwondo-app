@@ -12,14 +12,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,10 +50,17 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateEventScreen(navController: NavController, viewModel: CreateEventViewModel = hiltViewModel()) {
+fun CreateEventScreen(
+    navController: NavController,
+    navigationState: CreateEventViewModel.ScreenType,
+    viewModel: CreateEventViewModel = hiltViewModel()
+) {
     val event = viewModel.event.receiveAsFlow()
     val context = LocalContext.current
     val error = string(id = R.string.error_field_required)
+    var name by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf("") }
+    var place by remember { mutableStateOf("") }
     event.observe {
         when (it) {
             CreateEventViewModel.NavigateMainState -> {
@@ -66,23 +74,44 @@ fun CreateEventScreen(navController: NavController, viewModel: CreateEventViewMo
             CreateEventViewModel.ErrorState -> {
                 Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
             }
+
+            is CreateEventViewModel.UpdateEventState -> {
+                name = it.name
+                place = it.place
+                date = it.date
+            }
         }
     }
-    CreateEventScreen(viewModel::createEvent)
+    CreateEventScreen(
+        name,
+        { name = it },
+        date,
+        { date = it },
+        place,
+        { place = it },
+        navigationState,
+        viewModel::createEvent
+    )
 }
 
 @ExperimentalMaterial3Api
 @Composable
-fun CreateEventScreen(saveEvent: (String, String, String) -> Unit) {
-    var name by remember { mutableStateOf("") }
-    var place by remember { mutableStateOf("") }
+fun CreateEventScreen(
+    name: String,
+    onNameChanged: (String) -> Unit,
+    date: String,
+    onDateChanged: (String) -> Unit,
+    place: String,
+    onPlaceChanged: (String) -> Unit,
+    navigationState: CreateEventViewModel.ScreenType,
+    saveEvent: (String, String, String) -> Unit
+) {
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
         override fun isSelectableDate(utcTimeMillis: Long): Boolean {
             return utcTimeMillis >= System.currentTimeMillis()
         }
     })
-    var date by remember { mutableStateOf("") }
     val interactionSource = remember { MutableInteractionSource() }
     if (showDatePicker) {
         Dialog(
@@ -108,7 +137,7 @@ fun CreateEventScreen(saveEvent: (String, String, String) -> Unit) {
                         modifier = Modifier.align(Alignment.BottomEnd),
                         onClick = {
                             datePickerState.selectedDateMillis?.let {
-                                date = convertMillisToDate(it)
+                                onDateChanged(convertMillisToDate(it))
                             }
                             showDatePicker = false
                         }) {
@@ -132,7 +161,7 @@ fun CreateEventScreen(saveEvent: (String, String, String) -> Unit) {
         )
         OutlinedTextField(
             value = name,
-            onValueChange = { name = it },
+            onValueChange = { onNameChanged(it) },
             label = { Text(string(id = R.string.text_field_event_name)) },
             singleLine = true,
             shape = RoundedCornerShape(Dimen.padding_16),
@@ -146,7 +175,6 @@ fun CreateEventScreen(saveEvent: (String, String, String) -> Unit) {
             value = date,
             onValueChange = {},
             enabled = false,
-            readOnly = true,
             label = { Text(string(id = R.string.text_field_event_date)) },
             modifier = Modifier
                 .clickable(
@@ -161,10 +189,16 @@ fun CreateEventScreen(saveEvent: (String, String, String) -> Unit) {
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
             ),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                disabledTextColor = Color.Black,
+                disabledLabelColor = Color.Black,
+                disabledBorderColor = Color.Black,
+                disabledPlaceholderColor = Color.Black,
+            )
         )
         OutlinedTextField(
             value = place,
-            onValueChange = { place = it },
+            onValueChange = { onPlaceChanged(it) },
             label = { Text(string(id = R.string.text_field_event_place)) },
             singleLine = true,
             shape = RoundedCornerShape(Dimen.padding_16),
@@ -174,7 +208,10 @@ fun CreateEventScreen(saveEvent: (String, String, String) -> Unit) {
             ),
         )
         Button(onClick = { saveEvent(name, date, place) }) {
-            Text(string(id = R.string.button_save_event))
+            when (navigationState) {
+                CreateEventViewModel.Update -> Text(string(id = R.string.button_update_event))
+                CreateEventViewModel.Create -> Text(string(id = R.string.button_save_event))
+            }
         }
     }
 }

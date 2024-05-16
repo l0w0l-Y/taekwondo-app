@@ -25,7 +25,7 @@ class UpdateEventFighterViewModel @Inject constructor(
     val fighters = MutableStateFlow(listOf<FighterModel>())
 
     sealed class State
-    class NavigateEventState(val uid: Int) : State()
+    class NavigateMainState(val uid: Int) : State()
 
     val event = EventChannel<State>()
 
@@ -89,10 +89,11 @@ class UpdateEventFighterViewModel @Inject constructor(
         viewModelScope.launch {
             interactor.insertEventParticipants(
                 uid,
-                users.map { it.uid },
-                fighters.map { it.uid })
+                users.filter { it.isPicked }.map { it.uid },
+                fighters.filter { it.isPicked }.map { it.uid }
+            )
                 .doOnSuccess {
-                    event.send(NavigateEventState(uid))
+                    event.send(NavigateMainState(uid))
                 }
         }
     }

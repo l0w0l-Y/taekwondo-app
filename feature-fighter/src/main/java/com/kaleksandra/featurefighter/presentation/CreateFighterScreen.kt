@@ -112,7 +112,7 @@ fun CreateFighterScreen(
     imageUri: Uri?,
     onImageUriChanged: (Uri?) -> Unit = {},
     state: CreateFighterViewModel.ScreenType,
-    onSaveClick: (String, Float, Float, Float, String, String?) -> Unit,
+    onSaveClick: (String, Float?, Float?, Float?, String, String?) -> Unit,
     onUpdateState: (CreateFighterViewModel.ScreenType) -> Unit,
     onDeleteFighter: () -> Unit,
 ) {
@@ -138,7 +138,7 @@ fun CreateFighterScreen(
                 onValueChange = onNameChanged,
                 label = { Text(string(id = R.string.text_field_name)) },
                 modifier = Modifier.padding(top = Dimen.padding_12),
-                readOnly = state is CreateFighterViewModel.Read,
+                enabled = state !is CreateFighterViewModel.Read,
                 singleLine = true,
                 shape = RoundedCornerShape(Dimen.padding_16),
                 keyboardOptions = KeyboardOptions(
@@ -151,7 +151,7 @@ fun CreateFighterScreen(
                 onValueChange = onYearsChanged,
                 label = { Text(string(id = R.string.text_field_year)) },
                 modifier = Modifier.padding(top = Dimen.padding_12),
-                readOnly = state is CreateFighterViewModel.Read,
+                enabled = state !is CreateFighterViewModel.Read,
                 singleLine = true,
                 shape = RoundedCornerShape(Dimen.padding_16),
                 keyboardOptions = KeyboardOptions(
@@ -164,7 +164,7 @@ fun CreateFighterScreen(
                 onValueChange = onWeightChanged,
                 label = { Text(string(id = R.string.text_field_weight)) },
                 modifier = Modifier.padding(top = Dimen.padding_12),
-                readOnly = state is CreateFighterViewModel.Read,
+                enabled = state !is CreateFighterViewModel.Read,
                 singleLine = true,
                 shape = RoundedCornerShape(Dimen.padding_16),
                 keyboardOptions = KeyboardOptions(
@@ -177,7 +177,7 @@ fun CreateFighterScreen(
                 onValueChange = onHeightChanged,
                 label = { Text(string(id = R.string.text_field_height)) },
                 modifier = Modifier.padding(top = Dimen.padding_12),
-                readOnly = state is CreateFighterViewModel.Read,
+                enabled = state !is CreateFighterViewModel.Read,
                 singleLine = true,
                 shape = RoundedCornerShape(Dimen.padding_16),
                 keyboardOptions = KeyboardOptions(
@@ -190,7 +190,7 @@ fun CreateFighterScreen(
                 onValueChange = onWeightCategoryChanged,
                 label = { Text(string(id = R.string.text_field_weight_category)) },
                 modifier = Modifier.padding(top = Dimen.padding_12),
-                readOnly = state is CreateFighterViewModel.Read,
+                enabled = state !is CreateFighterViewModel.Read,
                 singleLine = true,
                 shape = RoundedCornerShape(Dimen.padding_16),
                 keyboardOptions = KeyboardOptions(
@@ -206,9 +206,9 @@ fun CreateFighterScreen(
                         onClick = {
                             onSaveClick(
                                 name,
-                                years.toFloat(),
-                                weight.toFloat(),
-                                height.toFloat(),
+                                years.toFloatOrNull(),
+                                weight.toFloatOrNull(),
+                                height.toFloatOrNull(),
                                 weightCategory,
                                 imageUri?.toString(),
                             )
@@ -246,9 +246,9 @@ fun CreateFighterScreen(
                         onClick = {
                             onSaveClick(
                                 name,
-                                years.toFloat(),
-                                weight.toFloat(),
-                                height.toFloat(),
+                                years.toFloatOrNull(),
+                                weight.toFloatOrNull(),
+                                height.toFloatOrNull(),
                                 weightCategory,
                                 imageUri?.toString(),
                             )

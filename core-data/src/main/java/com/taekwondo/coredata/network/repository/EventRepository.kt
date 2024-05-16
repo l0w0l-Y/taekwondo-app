@@ -58,6 +58,8 @@ class EventRepositoryImpl @Inject constructor(
     ): Effect<Unit> {
         return callDB(ioDispatcher) {
             eventDao.getEvent(uidEvent)?.let { event ->
+                eventParticipantsDao.removeEventFighterCrossRef(event.uid)
+                eventParticipantsDao.removeEventJudgeCrossRef(event.uid)
                 users.forEach { user ->
                     eventParticipantsDao.insertEventJudgeCrossRef(
                         EventJudgeCrossRef(
