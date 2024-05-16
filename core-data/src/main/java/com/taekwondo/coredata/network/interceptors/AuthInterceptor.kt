@@ -18,12 +18,12 @@ class AuthInterceptor @Inject constructor(
     @ApplicationScope mainScope: CoroutineScope
 ) : Interceptor {
 
-    private var token = 0
+    private var token = 0L
 
     init {
         dataStore.get(UID_KEY)
             .distinctUntilChanged()
-            .onEach { token = it ?: 0 }
+            .onEach { token = it ?: 0L }
             .launchIn(mainScope)
     }
 

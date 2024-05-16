@@ -18,7 +18,7 @@ class EventViewModel @Inject constructor(
     private val interactor: EventInteractor,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val uid = checkNotNull(savedStateHandle.get<Int>("uid"))
+    private val uid = checkNotNull(savedStateHandle.get<Long>("uid"))
 
     private val _eventModel = MutableStateFlow<EventModel?>(null)
     val eventModel: StateFlow<EventModel?> = _eventModel
@@ -26,8 +26,8 @@ class EventViewModel @Inject constructor(
     val event = EventChannel<State>()
 
     sealed class State
-    class NavigateUpdateParticipantsState(val uid: Int) : State()
-    class NavigateUpdateEventState(val uid: Int) : State()
+    class NavigateUpdateParticipantsState(val uid: Long) : State()
+    class NavigateUpdateEventState(val uid: Long) : State()
 
     init {
         viewModelScope.launch {

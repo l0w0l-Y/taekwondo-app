@@ -13,7 +13,7 @@ import com.taekwondo.coredata.network.entity.EventParticipants
 interface EventParticipantsDao {
     @Transaction
     @Query("SELECT * FROM event WHERE eventId = :eventId")
-    fun getEventParticipants(eventId: Int): EventParticipants?
+    fun getEventParticipants(eventId: Long): EventParticipants?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEventJudgeCrossRef(crossRef: EventJudgeCrossRef)
@@ -22,7 +22,7 @@ interface EventParticipantsDao {
     fun insertEventFighterCrossRef(crossRef: EventFighterCrossRef)
 
     @Query("DELETE FROM eventfightercrossref WHERE eventId = :eventId")
-    fun removeEventFighterCrossRef(eventId: Int)
+    fun removeEventFighterCrossRef(eventId: Long)
     @Query("DELETE FROM eventjudgecrossref WHERE eventId = :eventId")
-    fun removeEventJudgeCrossRef(eventId: Int)
+    fun removeEventJudgeCrossRef(eventId: Long)
 }

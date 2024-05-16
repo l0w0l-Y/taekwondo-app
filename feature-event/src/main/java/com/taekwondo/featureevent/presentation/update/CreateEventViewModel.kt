@@ -15,7 +15,7 @@ class CreateEventViewModel @Inject constructor(
     private val interactor: EventInteractor,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val uid = savedStateHandle.get<Int?>("uid")
+    private val uid = savedStateHandle.get<Long?>("uid")
 
     sealed class State
     object NavigateMainState : State()
@@ -28,7 +28,7 @@ class CreateEventViewModel @Inject constructor(
     object Create : ScreenType()
 
     class UpdateEventState(
-        val uid: Int,
+        val uid: Long,
         val name: String,
         val date: String,
         val place: String,

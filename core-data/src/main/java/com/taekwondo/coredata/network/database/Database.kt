@@ -11,11 +11,11 @@ import com.taekwondo.coredata.network.entity.EventEntity
 import com.taekwondo.coredata.network.entity.EventFighterCrossRef
 import com.taekwondo.coredata.network.entity.EventJudgeCrossRef
 import com.taekwondo.coredata.network.entity.FighterEntity
-import com.taekwondo.coredata.network.entity.UserEntity
+import com.taekwondo.coredata.network.entity.JudgeEntity
 
 @Database(
     entities = [
-        UserEntity::class,
+        JudgeEntity::class,
         FighterEntity::class,
         EventEntity::class,
         EventJudgeCrossRef::class,

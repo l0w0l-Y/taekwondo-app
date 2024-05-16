@@ -23,9 +23,9 @@ interface FighterRepository {
     ): Effect<Unit>
 
     suspend fun getAllFighters(): Effect<List<FighterEntity>>
-    suspend fun getFighter(uid: Int): Effect<FighterEntity>
+    suspend fun getFighter(uid: Long): Effect<FighterEntity>
     suspend fun updateFighter(
-        uid: Int,
+        uid: Long,
         name: String,
         age: Float,
         weight: Float,
@@ -34,7 +34,7 @@ interface FighterRepository {
         photo: String?,
     ): Effect<Unit>
 
-    suspend fun deleteFighter(uid: Int): Effect<Unit>
+    suspend fun deleteFighter(uid: Long): Effect<Unit>
 }
 
 class FighterRepositoryImpl @Inject constructor(
@@ -69,7 +69,7 @@ class FighterRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getFighter(uid: Int): Effect<FighterEntity> {
+    override suspend fun getFighter(uid: Long): Effect<FighterEntity> {
         return callDB(dispatcher) {
             fighterDao.getFighter(uid)
         }.mapEffect { user ->
@@ -82,7 +82,7 @@ class FighterRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateFighter(
-        uid: Int,
+        uid: Long,
         name: String,
         age: Float,
         weight: Float,
@@ -105,7 +105,7 @@ class FighterRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteFighter(uid: Int): Effect<Unit> {
+    override suspend fun deleteFighter(uid: Long): Effect<Unit> {
         return callDB(dispatcher) {
             fighterDao.deleteFighter(uid)
         }

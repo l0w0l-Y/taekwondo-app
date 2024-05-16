@@ -1,4 +1,4 @@
-package com.kaleksandra.featuremain.presentation
+package com.taekwondo.featuremain.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.kaleksandra.featuremain.presentation.model.EventModel
-import com.kaleksandra.featuremain.presentation.model.FighterModel
+import com.taekwondo.featuremain.presentation.model.EventModel
+import com.taekwondo.featuremain.presentation.model.FighterModel
 import com.taekwondo.corecommon.ext.observe
 import com.taekwondo.corenavigation.AuthDirection
 import com.taekwondo.corenavigation.CreateEventDirection
@@ -78,9 +78,9 @@ fun MainScreen(
     events: List<EventModel>,
     createFighter: () -> Unit,
     createEvent: () -> Unit,
-    updateFighter: (Int) -> Unit,
+    updateFighter: (Long) -> Unit,
     logOut: () -> Unit,
-    onOpenEvent: (Int) -> Unit,
+    onOpenEvent: (Long) -> Unit,
 ) {
     Column(
         modifier = Modifier

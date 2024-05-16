@@ -1,10 +1,10 @@
-package com.kaleksandra.featuremain.presentation
+package com.taekwondo.featuremain.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaleksandra.featuremain.domain.MainInteractor
-import com.kaleksandra.featuremain.presentation.model.EventModel
-import com.kaleksandra.featuremain.presentation.model.FighterModel
+import com.taekwondo.featuremain.domain.MainInteractor
+import com.taekwondo.featuremain.presentation.model.EventModel
+import com.taekwondo.featuremain.presentation.model.FighterModel
 import com.taekwondo.corecommon.ext.EventChannel
 import com.taekwondo.coredata.network.doOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel

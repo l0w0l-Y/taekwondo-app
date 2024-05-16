@@ -19,5 +19,5 @@ interface EventDao {
     fun getAllEvents(): List<EventEntity>
 
     @Query("SELECT * FROM event WHERE eventId = :uid")
-    fun getEvent(uid: Int): EventEntity?
+    fun getEvent(uid: Long): EventEntity?
 }

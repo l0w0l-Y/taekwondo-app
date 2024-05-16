@@ -1,13 +1,13 @@
 package com.taekwondo.featureevent.presentation.model
 
 import com.taekwondo.coredata.network.entity.FighterEntity
-import com.taekwondo.coredata.network.entity.UserEntity
+import com.taekwondo.coredata.network.entity.JudgeEntity
 
 data class EventModel(
-    val uid: Int,
+    val uid: Long,
     val name: String,
     val date: String,
     val place: String,
     var fighters: List<FighterEntity>,
-    var users: List<UserEntity>,
+    var users: List<JudgeEntity>,
 )

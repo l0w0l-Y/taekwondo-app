@@ -93,7 +93,7 @@ fun EventScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    string(R.string.title_judges, eventModel.users.size),
+                    string(R.string.title_judges_size, eventModel.users.size),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -131,7 +131,7 @@ fun EventScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = string(R.string.title_fighters, eventModel.fighters.size),
+                    text = string(R.string.title_fighters_size, eventModel.fighters.size),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold
                 )

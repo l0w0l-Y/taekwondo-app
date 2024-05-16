@@ -1,7 +1,7 @@
-package com.kaleksandra.featurefighter.di
+package com.taekwondo.featurefighter.di
 
-import com.kaleksandra.featurefighter.domain.FighterInteractor
-import com.kaleksandra.featurefighter.domain.FighterInteractorImpl
+import com.taekwondo.featurefighter.domain.FighterInteractor
+import com.taekwondo.featurefighter.domain.FighterInteractorImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

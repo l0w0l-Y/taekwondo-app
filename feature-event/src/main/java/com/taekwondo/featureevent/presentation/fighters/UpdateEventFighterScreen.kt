@@ -78,7 +78,7 @@ fun UpdateEventFighterScreen(
             .padding(Dimen.padding_16)
     ) {
         Text(
-            "Бойцы",
+            string(id = R.string.title_fighters),
             modifier = Modifier.padding(top = Dimen.padding_16),
             style = MaterialTheme.typography.titleMedium
         )
@@ -114,7 +114,7 @@ fun UpdateEventFighterScreen(
             }
         }
         Text(
-            "Судьи",
+            string(id = R.string.title_judges),
             modifier = Modifier.padding(top = Dimen.padding_16),
             style = MaterialTheme.typography.titleMedium
         )

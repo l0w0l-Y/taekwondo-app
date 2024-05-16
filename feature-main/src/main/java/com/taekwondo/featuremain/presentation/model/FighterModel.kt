@@ -1,7 +1,7 @@
-package com.kaleksandra.featuremain.presentation.model
+package com.taekwondo.featuremain.presentation.model
 
 data class FighterModel(
-    val uid: Int,
+    val uid: Long,
     val name: String,
     val age: Float,
     val weight: Float,

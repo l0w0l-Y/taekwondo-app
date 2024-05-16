@@ -1,7 +1,7 @@
-package com.kaleksandra.featuremain.di
+package com.taekwondo.featuremain.di
 
-import com.kaleksandra.featuremain.domain.MainInteractor
-import com.kaleksandra.featuremain.domain.MainInteractorImpl
+import com.taekwondo.featuremain.domain.MainInteractor
+import com.taekwondo.featuremain.domain.MainInteractorImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

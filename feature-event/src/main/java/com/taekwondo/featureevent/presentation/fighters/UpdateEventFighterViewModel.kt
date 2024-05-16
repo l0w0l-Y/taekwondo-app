@@ -19,13 +19,13 @@ class UpdateEventFighterViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val uid = checkNotNull(savedStateHandle.get<Int?>("uid"))
+    private val uid = checkNotNull(savedStateHandle.get<Long?>("uid"))
 
     val judges = MutableStateFlow(listOf<JudgeModel>())
     val fighters = MutableStateFlow(listOf<FighterModel>())
 
     sealed class State
-    class NavigateMainState(val uid: Int) : State()
+    class NavigateMainState(val uid: Long) : State()
 
     val event = EventChannel<State>()
 

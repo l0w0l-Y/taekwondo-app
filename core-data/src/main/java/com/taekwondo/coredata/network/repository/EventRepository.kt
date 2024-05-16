@@ -9,8 +9,6 @@ import com.taekwondo.coredata.network.entity.EventEntity
 import com.taekwondo.coredata.network.entity.EventFighterCrossRef
 import com.taekwondo.coredata.network.entity.EventJudgeCrossRef
 import com.taekwondo.coredata.network.entity.EventParticipants
-import com.taekwondo.coredata.network.entity.FighterEntity
-import com.taekwondo.coredata.network.entity.UserEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
@@ -19,19 +17,19 @@ interface EventRepository {
     suspend fun getAllEvents(): Effect<Unit>
 
     suspend fun insertEventParticipants(
-        uidEvent: Int,
-        users: List<Int>,
-        fighters: List<Int>
+        uidEvent: Long,
+        users: List<Long>,
+        fighters: List<Long>
     ): Effect<Unit>
 
     suspend fun updateEvent(
-        uid: Int,
+        uid: Long,
         name: String,
         date: String,
         place: String
     ): Effect<Unit>
 
-    suspend fun getEventParticipants(uid: Int): Effect<EventParticipants?>
+    suspend fun getEventParticipants(uid: Long): Effect<EventParticipants?>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -52,9 +50,9 @@ class EventRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertEventParticipants(
-        uidEvent: Int,
-        users: List<Int>,
-        fighters: List<Int>
+        uidEvent: Long,
+        users: List<Long>,
+        fighters: List<Long>
     ): Effect<Unit> {
         return callDB(ioDispatcher) {
             eventDao.getEvent(uidEvent)?.let { event ->
@@ -81,7 +79,7 @@ class EventRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateEvent(
-        uid: Int,
+        uid: Long,
         name: String,
         date: String,
         place: String
@@ -98,7 +96,7 @@ class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getEventParticipants(uid: Int): Effect<EventParticipants?> {
+    override suspend fun getEventParticipants(uid: Long): Effect<EventParticipants?> {
         return callDB(ioDispatcher) {
             eventParticipantsDao.getEventParticipants(uid).apply {
                 if (this == null) {

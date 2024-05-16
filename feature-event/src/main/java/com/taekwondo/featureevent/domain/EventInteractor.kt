@@ -12,15 +12,15 @@ import javax.inject.Inject
 
 interface EventInteractor {
     suspend fun createEvent(name: String, date: String, place: String): Effect<Unit>
-    suspend fun updateEvent(uid: Int, name: String, date: String, place: String): Effect<Unit>
+    suspend fun updateEvent(uid: Long, name: String, date: String, place: String): Effect<Unit>
     suspend fun getAllEvents(): Effect<Unit>
     suspend fun insertEventParticipants(
-        uid: Int,
-        users: List<Int>,
-        fighters: List<Int>
+        uid: Long,
+        users: List<Long>,
+        fighters: List<Long>
     ): Effect<Unit>
 
-    suspend fun getEventModel(uid: Int): Effect<EventModel?>
+    suspend fun getEventModel(uid: Long): Effect<EventModel?>
     suspend fun getAllFighters(): Effect<List<FighterModel>>
     suspend fun getAllUsers(): Effect<List<JudgeModel>>
 }
@@ -35,7 +35,7 @@ class EventInteractorImpl @Inject constructor(
     }
 
     override suspend fun updateEvent(
-        uid: Int,
+        uid: Long,
         name: String,
         date: String,
         place: String
@@ -48,14 +48,14 @@ class EventInteractorImpl @Inject constructor(
     }
 
     override suspend fun insertEventParticipants(
-        uid: Int,
-        users: List<Int>,
-        fighters: List<Int>
+        uid: Long,
+        users: List<Long>,
+        fighters: List<Long>
     ): Effect<Unit> {
         return eventRepository.insertEventParticipants(uid, users, fighters)
     }
 
-    override suspend fun getEventModel(uid: Int): Effect<EventModel?> {
+    override suspend fun getEventModel(uid: Long): Effect<EventModel?> {
         return eventRepository.getEventParticipants(uid).map {
             it?.let { eventParticipantsEntity ->
                 EventModel(

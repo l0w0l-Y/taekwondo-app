@@ -12,7 +12,7 @@ class EventParticipants(
         entityColumn = "judgeId",
         associateBy = Junction(EventJudgeCrossRef::class)
     )
-    val judges: List<UserEntity>,
+    val judges: List<JudgeEntity>,
     @Relation(
         parentColumn = "eventId",
         entityColumn = "fighterId",
@@ -23,12 +23,12 @@ class EventParticipants(
 
 @Entity(primaryKeys = ["eventId", "judgeId"])
 data class EventJudgeCrossRef(
-    val eventId: Int,
-    val judgeId: Int
+    val eventId: Long,
+    val judgeId: Long
 )
 
 @Entity(primaryKeys = ["eventId", "fighterId"])
 data class EventFighterCrossRef(
-    val eventId: Int,
-    val fighterId: Int
+    val eventId: Long,
+    val fighterId: Long
 )

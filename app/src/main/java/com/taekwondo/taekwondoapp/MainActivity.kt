@@ -14,9 +14,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.kaleksandra.featurefighter.presentation.CreateFighterScreen
-import com.kaleksandra.featurefighter.presentation.CreateFighterViewModel
-import com.kaleksandra.featuremain.presentation.MainScreen
+import com.taekwondo.featurefighter.presentation.CreateFighterScreen
+import com.taekwondo.featurefighter.presentation.CreateFighterViewModel
+import com.taekwondo.featuremain.presentation.MainScreen
 import com.taekwondo.corenavigation.AuthDirection
 import com.taekwondo.corenavigation.CreateEventDirection
 import com.taekwondo.corenavigation.CreateFighterDirection
@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                                 composable(
                                     UpdateFighterDirection.path + "?uid={uid}",
                                     arguments = listOf(navArgument("uid") {
-                                        type = NavType.IntType
+                                        type = NavType.LongType
                                     })
                                 ) {
                                     CreateFighterScreen(
@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
                                 composable(
                                     ReadFighterDirection.path + "?uid={uid}",
                                     arguments = listOf(
-                                        navArgument("uid") { type = NavType.IntType },
+                                        navArgument("uid") { type = NavType.LongType },
                                     )
                                 ) {
                                     CreateFighterScreen(
@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
                                 composable(
                                     ReadEventDirection.path + "?uid={uid}",
                                     arguments = listOf(
-                                        navArgument("uid") { type = NavType.IntType },
+                                        navArgument("uid") { type = NavType.LongType },
                                     )
                                 ) {
                                     EventScreen(navController = navController)
@@ -105,7 +105,7 @@ class MainActivity : ComponentActivity() {
                                 composable(
                                     UpdateEventDirection.path + "?uid={uid}",
                                     arguments = listOf(
-                                        navArgument("uid") { type = NavType.IntType },
+                                        navArgument("uid") { type = NavType.LongType },
                                     )
                                 ) {
                                     CreateEventScreen(
@@ -116,7 +116,7 @@ class MainActivity : ComponentActivity() {
                                 composable(
                                     UpdateEventFighterDirection.path + "?uid={uid}",
                                     arguments = listOf(
-                                        navArgument("uid") { type = NavType.IntType },
+                                        navArgument("uid") { type = NavType.LongType },
                                     )
                                 ) {
                                     UpdateEventFighterScreen(navController = navController)

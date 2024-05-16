@@ -1,11 +1,10 @@
-package com.kaleksandra.featurefighter.presentation
+package com.taekwondo.featurefighter.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaleksandra.featurefighter.domain.FighterInteractor
+import com.taekwondo.featurefighter.domain.FighterInteractor
 import com.taekwondo.corecommon.ext.EventChannel
-import com.taekwondo.corecommon.ext.debug
 import com.taekwondo.coredata.network.doOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +16,7 @@ class CreateFighterViewModel @Inject constructor(
     private val interactor: FighterInteractor,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val uid = savedStateHandle.get<Int?>("uid")
+    private val uid = savedStateHandle.get<Long?>("uid")
     private val type = savedStateHandle.get<String?>("type")
     val state = MutableStateFlow<ScreenType>(Create)
 
@@ -30,7 +29,7 @@ class CreateFighterViewModel @Inject constructor(
     object NavigateMainState : State()
     object ErrorState : State()
     class UpdateFighterState(
-        val uid: Int = 0,
+        val uid: Long = 0L,
         val name: String,
         val age: String,
         val weight: String,

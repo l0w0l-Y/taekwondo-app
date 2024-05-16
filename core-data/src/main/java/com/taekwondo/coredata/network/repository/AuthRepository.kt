@@ -9,7 +9,7 @@ import com.taekwondo.coredata.network.dao.AuthDao
 import com.taekwondo.coredata.network.database.DataStoreProvider
 import com.taekwondo.coredata.network.database.UID_KEY
 import com.taekwondo.coredata.network.di.IoDispatcher
-import com.taekwondo.coredata.network.entity.UserEntity
+import com.taekwondo.coredata.network.entity.JudgeEntity
 import com.taekwondo.coredata.network.mapEffect
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -25,7 +25,8 @@ interface AuthRepository {
         phone: String,
         photo: String,
     ): Effect<Unit>
-    suspend fun getAllUsers(): Effect<List<UserEntity>>
+
+    suspend fun getAllUsers(): Effect<List<JudgeEntity>>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -56,10 +57,10 @@ class AuthRepositoryImpl @Inject constructor(
     ): Effect<Unit> {
         return callDB(dispatcher) {
             if (dao.getUserByEmail(email) != null) {
-                Error<UserEntity>()
+                Error<JudgeEntity>()
             } else {
-                dao.insert(
-                    UserEntity(
+                val userId = dao.insert(
+                    JudgeEntity(
                         email = email,
                         password = password,
                         name = name,
@@ -68,11 +69,12 @@ class AuthRepositoryImpl @Inject constructor(
                         photo = photo,
                     )
                 )
+                withContext(dispatcher) { dataStoreProvider.update(UID_KEY, userId) }
             }
         }
     }
 
-    override suspend fun getAllUsers(): Effect<List<UserEntity>> {
+    override suspend fun getAllUsers(): Effect<List<JudgeEntity>> {
         return callDB(dispatcher) {
             dao.getAllUsers()
         }

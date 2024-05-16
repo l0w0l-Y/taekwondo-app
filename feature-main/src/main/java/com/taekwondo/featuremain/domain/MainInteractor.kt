@@ -1,4 +1,4 @@
-package com.kaleksandra.featuremain.domain
+package com.taekwondo.featuremain.domain
 
 import com.taekwondo.coredata.network.Effect
 import com.taekwondo.coredata.network.entity.EventEntity

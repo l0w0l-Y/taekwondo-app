@@ -1,4 +1,4 @@
-package com.kaleksandra.featurefighter.presentation
+package com.taekwondo.featurefighter.presentation
 
 import android.net.Uri
 import android.widget.Toast
@@ -126,7 +126,8 @@ fun CreateFighterScreen(
         ImageScreen(
             imageUri,
             onImageUpdate = onImageUriChanged,
-            modifier = Modifier.padding(top = Dimen.padding_8)
+            modifier = Modifier.padding(top = Dimen.padding_8),
+            enabled = state !is CreateFighterViewModel.Read
         )
         Column(
             modifier = Modifier

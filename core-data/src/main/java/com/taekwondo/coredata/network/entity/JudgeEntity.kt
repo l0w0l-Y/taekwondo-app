@@ -4,11 +4,11 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "user")
-data class UserEntity(
+@Entity(tableName = "judge")
+data class JudgeEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "judgeId")
-    val uid: Int = 0,
+    val uid: Long = 0,
     @ColumnInfo(name = "name")
     val name: String,
     @ColumnInfo(name = "username")

@@ -26,7 +26,12 @@ import coil.request.ImageRequest
 import com.taekwondo.coreui.R
 
 @Composable
-fun ImageScreen(imagePath: Uri?, onImageUpdate: (Uri?) -> Unit, modifier: Modifier = Modifier) {
+fun ImageScreen(
+    imagePath: Uri?,
+    onImageUpdate: (Uri?) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
@@ -54,7 +59,7 @@ fun ImageScreen(imagePath: Uri?, onImageUpdate: (Uri?) -> Unit, modifier: Modifi
             contentDescription = null,
             modifier = Modifier
                 .fillMaxSize()
-                .clickable {
+                .clickable(enabled = enabled) {
                     launcher.launch(arrayOf("image/*"))
                 },
             contentScale = ContentScale.Crop,
