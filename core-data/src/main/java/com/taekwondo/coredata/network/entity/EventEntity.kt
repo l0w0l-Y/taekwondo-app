@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "event")
 data class EventEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "uid")
+    @ColumnInfo(name = "eventId")
     val uid: Int = 0,
     @ColumnInfo(name = "name")
     val name: String,

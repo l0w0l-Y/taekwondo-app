@@ -7,7 +7,6 @@ import com.taekwondo.coredata.network.Success
 import com.taekwondo.coredata.network.callDB
 import com.taekwondo.coredata.network.dao.AuthDao
 import com.taekwondo.coredata.network.database.DataStoreProvider
-import com.taekwondo.coredata.network.database.DatabaseError
 import com.taekwondo.coredata.network.database.UID_KEY
 import com.taekwondo.coredata.network.di.IoDispatcher
 import com.taekwondo.coredata.network.entity.UserEntity
@@ -26,6 +25,7 @@ interface AuthRepository {
         phone: String,
         photo: String,
     ): Effect<Unit>
+    suspend fun getAllUsers(): Effect<List<UserEntity>>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -69,6 +69,12 @@ class AuthRepositoryImpl @Inject constructor(
                     )
                 )
             }
+        }
+    }
+
+    override suspend fun getAllUsers(): Effect<List<UserEntity>> {
+        return callDB(dispatcher) {
+            dao.getAllUsers()
         }
     }
 }

@@ -8,4 +8,8 @@
     <string name="button_select_date">Выбрать дату</string>
     <string name="button_select_date_cancel">Отменить</string>
     <string name="error_field_required">Необходимо заполнить все поля</string>
+    <string name="title_fighters">Бойцы %s</string>
+    <string name="title_judges">Судьи %s</string>
+    <string name="button_update">Изменить</string>
+    <string name="button_save">Сохранить</string>
 </resources>

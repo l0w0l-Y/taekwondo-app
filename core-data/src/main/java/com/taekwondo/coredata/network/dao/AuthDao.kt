@@ -14,4 +14,7 @@ interface AuthDao {
 
     @Query("SELECT * FROM user WHERE email LIKE :email LIMIT 1")
     fun getUserByEmail(email: String): UserEntity?
+
+    @Query("SELECT * FROM user")
+    fun getAllUsers(): List<UserEntity>
 }

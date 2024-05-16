@@ -18,9 +18,9 @@ interface FighterDao {
     @Query("SELECT * FROM fighter")
     fun getAllFighters(): List<FighterEntity>
 
-    @Query("SELECT * FROM fighter WHERE uid = :uid")
+    @Query("SELECT * FROM fighter WHERE fighterId = :uid")
     fun getFighter(uid: Int): FighterEntity?
 
-    @Query("DELETE FROM fighter WHERE uid = :uid")
+    @Query("DELETE FROM fighter WHERE fighterId = :uid")
     fun deleteFighter(uid: Int)
 }

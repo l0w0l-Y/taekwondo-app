@@ -36,7 +36,9 @@ import com.taekwondo.corecommon.ext.observe
 import com.taekwondo.corenavigation.AuthDirection
 import com.taekwondo.corenavigation.CreateEventDirection
 import com.taekwondo.corenavigation.CreateFighterDirection
+import com.taekwondo.corenavigation.ReadEventDirection
 import com.taekwondo.corenavigation.ReadFighterDirection
+import com.taekwondo.corenavigation.UpdateFighterDirection
 import com.taekwondo.corenavigation.navigate
 import com.taekwondo.coretheme.Dimen
 import com.taekwondo.coreui.compose.string
@@ -65,7 +67,8 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltView
         { navController.navigate(CreateFighterDirection) },
         { navController.navigate(CreateEventDirection) },
         { uid -> navController.navigate("${ReadFighterDirection.path}?uid=$uid") },
-        viewModel::logOut
+        viewModel::logOut,
+        { uid -> navController.navigate("${ReadEventDirection.path}?uid=$uid") }
     )
 }
 
@@ -73,9 +76,11 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltView
 fun MainScreen(
     fighters: List<FighterModel>,
     events: List<EventModel>,
-    createFighter: () -> Unit, createEvent: () -> Unit,
+    createFighter: () -> Unit,
+    createEvent: () -> Unit,
     updateFighter: (Int) -> Unit,
     logOut: () -> Unit,
+    onOpenEvent: (Int) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -150,7 +155,7 @@ fun MainScreen(
             LazyColumn(modifier = Modifier.padding(top = Dimen.padding_12)) {
                 items(events) {
                     Text(text = it.name, modifier = Modifier.clickable {
-                       //TODO: Добавить открытие соревнования
+                        onOpenEvent(it.uid)
                     })
                 }
             }

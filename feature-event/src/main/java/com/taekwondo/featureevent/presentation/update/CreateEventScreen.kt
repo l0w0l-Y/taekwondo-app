@@ -1,4 +1,4 @@
-package com.taekwondo.featureevent.presentation
+package com.taekwondo.featureevent.presentation.update
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -45,16 +45,17 @@ import com.taekwondo.featureevent.R
 import kotlinx.coroutines.flow.receiveAsFlow
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventScreen(navController: NavController, viewModel: EventViewModel = hiltViewModel()) {
+fun CreateEventScreen(navController: NavController, viewModel: CreateEventViewModel = hiltViewModel()) {
     val event = viewModel.event.receiveAsFlow()
     val context = LocalContext.current
     val error = string(id = R.string.error_field_required)
     event.observe {
         when (it) {
-            EventViewModel.NavigateMainState -> {
+            CreateEventViewModel.NavigateMainState -> {
                 navController.navigate(MainDirection.path) {
                     popUpTo(MainDirection.path) {
                         inclusive = true
@@ -62,17 +63,17 @@ fun EventScreen(navController: NavController, viewModel: EventViewModel = hiltVi
                 }
             }
 
-            EventViewModel.ErrorState -> {
+            CreateEventViewModel.ErrorState -> {
                 Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
             }
         }
     }
-    EventScreen(viewModel::createEvent)
+    CreateEventScreen(viewModel::createEvent)
 }
 
 @ExperimentalMaterial3Api
 @Composable
-fun EventScreen(saveEvent: (String, String, String) -> Unit) {
+fun CreateEventScreen(saveEvent: (String, String, String) -> Unit) {
     var name by remember { mutableStateOf("") }
     var place by remember { mutableStateOf("") }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -179,6 +180,6 @@ fun EventScreen(saveEvent: (String, String, String) -> Unit) {
 }
 
 private fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("dd.MM.yyyy")
+    val formatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
     return formatter.format(Date(millis))
 }

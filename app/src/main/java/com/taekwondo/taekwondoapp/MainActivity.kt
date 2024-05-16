@@ -21,13 +21,17 @@ import com.taekwondo.corenavigation.AuthDirection
 import com.taekwondo.corenavigation.CreateEventDirection
 import com.taekwondo.corenavigation.CreateFighterDirection
 import com.taekwondo.corenavigation.MainDirection
+import com.taekwondo.corenavigation.ReadEventDirection
 import com.taekwondo.corenavigation.ReadFighterDirection
 import com.taekwondo.corenavigation.RegisterDirection
+import com.taekwondo.corenavigation.UpdateEventFighterDirection
 import com.taekwondo.corenavigation.UpdateFighterDirection
 import com.taekwondo.coretheme.AppTheme
 import com.taekwondo.featureauth.presentation.auth.AuthScreen
 import com.taekwondo.featureauth.presentation.register.RegisterScreen
-import com.taekwondo.featureevent.presentation.EventScreen
+import com.taekwondo.featureevent.presentation.event.EventScreen
+import com.taekwondo.featureevent.presentation.fighters.UpdateEventFighterScreen
+import com.taekwondo.featureevent.presentation.update.CreateEventScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -80,8 +84,19 @@ class MainActivity : ComponentActivity() {
                                         navigationState = CreateFighterViewModel.Read
                                     )
                                 }
-                                composable(CreateEventDirection.path) {
+                                composable(
+                                    ReadEventDirection.path + "?uid={uid}",
+                                    arguments = listOf(
+                                        navArgument("uid") { type = NavType.IntType },
+                                    )
+                                ) {
                                     EventScreen(navController = navController)
+                                }
+                                composable(CreateEventDirection.path) {
+                                    CreateEventScreen(navController = navController)
+                                }
+                                composable(UpdateEventFighterDirection.path){
+                                    UpdateEventFighterScreen(navController = navController)
                                 }
                             }
                         }

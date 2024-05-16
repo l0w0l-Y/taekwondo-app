@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.taekwondo.coredata.network.dao.AuthDao
 import com.taekwondo.coredata.network.dao.EventDao
+import com.taekwondo.coredata.network.dao.EventParticipantsDao
 import com.taekwondo.coredata.network.dao.FighterDao
 import com.taekwondo.coredata.network.database.DataStoreProvider
 import com.taekwondo.coredata.network.database.Database
@@ -49,5 +50,10 @@ class DatabaseModule {
     @Provides
     fun provideEventDao(database: Database): EventDao {
         return database.eventDao()
+    }
+
+    @Provides
+    fun provideEventParticipantsDao(database: Database): EventParticipantsDao {
+        return database.eventParticipantsDao()
     }
 }

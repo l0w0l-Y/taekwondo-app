@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "fighter")
 data class FighterEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "uid")
+    @ColumnInfo(name = "fighterId")
     val uid: Int = 0,
     @ColumnInfo(name = "name")
     val name:String,

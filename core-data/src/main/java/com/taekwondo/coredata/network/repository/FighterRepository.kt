@@ -3,7 +3,6 @@ package com.taekwondo.coredata.network.repository
 import com.taekwondo.coredata.network.Effect
 import com.taekwondo.coredata.network.Error
 import com.taekwondo.coredata.network.Success
-import com.taekwondo.coredata.network.call
 import com.taekwondo.coredata.network.callDB
 import com.taekwondo.coredata.network.dao.FighterDao
 import com.taekwondo.coredata.network.database.DatabaseError
