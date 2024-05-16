@@ -12,7 +12,7 @@
     <string name="title_fighters_size">Бойцы %s</string>
     <string name="title_judges_size">Судьи %s</string>
     <string name="title_judges">Судьи</string>
-    <string name="title_fighters">Бойцы</string>
+    <string name="title_fighter">Бойцы</string>
     <string name="button_update">Изменить</string>
     <string name="button_save">Сохранить</string>
 </resources>
