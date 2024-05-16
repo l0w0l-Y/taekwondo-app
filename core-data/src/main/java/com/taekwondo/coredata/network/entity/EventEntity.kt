@@ -4,6 +4,13 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ * Сущность, представляющая событие.
+ * @param uid Идентификатор события.
+ * @param name Название события.
+ * @param date Дата проведения события.
+ * @param place Место проведения события.
+ */
 @Entity(tableName = "event")
 data class EventEntity(
     @PrimaryKey(autoGenerate = true)

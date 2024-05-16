@@ -29,6 +29,11 @@ class UpdateEventFighterViewModel @Inject constructor(
 
     val event = EventChannel<State>()
 
+    /**
+     * Получает список судей и бойцов.
+     * Получает модель события по uid.
+     * При получении модели события, устанавливает флаги isPicked для судей и бойцов, которые уже участвуют в событии.
+     */
     init {
         viewModelScope.launch {
             interactor.getAllFighters().doOnSuccess {
@@ -63,6 +68,9 @@ class UpdateEventFighterViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Обновляет флаг isPicked для судьи, если судья участвует или не участвует в событии.
+     */
     fun updateJudges(judge: JudgeModel) {
         val updatedJudges = judges.value.map { currentJudge ->
             if (currentJudge.uid == judge.uid) {
@@ -74,6 +82,9 @@ class UpdateEventFighterViewModel @Inject constructor(
         judges.value = updatedJudges
     }
 
+    /**
+     * Обновляет флаг isPicked для бойца, если боец участвует или не участвует в событии.
+     */
     fun updateFighters(fighter: FighterModel) {
         val updatedFighter = fighters.value.map { currentFighter ->
             if (currentFighter.uid == fighter.uid) {
@@ -85,6 +96,10 @@ class UpdateEventFighterViewModel @Inject constructor(
         fighters.value = updatedFighter
     }
 
+    /**
+     * Обновляет список участников события.
+     * Перенаправляет на главный экран.
+     */
     fun updateEventFighter(users: List<JudgeModel>, fighters: List<FighterModel>) {
         viewModelScope.launch {
             interactor.insertEventParticipants(

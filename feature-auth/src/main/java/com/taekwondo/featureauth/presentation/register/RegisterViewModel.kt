@@ -24,6 +24,18 @@ class RegisterViewModel @Inject constructor(
     class ErrorState(val message: String) : State()
 
     val event = EventChannel<State>()
+
+    /**
+     * Регистрирует пользователя.
+     * @param name имя пользователя.
+     * @param username логин пользователя.
+     * @param email почта пользователя.
+     * @param password пароль пользователя.
+     * @param phone телефон пользователя.
+     * @param photo фото пользователя.
+     * При успешной регистрации отправляет событие [NavigateMainState], которое перенаправляет на главный экран.
+     * При ошибке отправляет событие [ErrorState], которое выводит ошибку.
+     */
     fun onRegister(
         name: String,
         username: String,

@@ -34,6 +34,9 @@ class CreateEventViewModel @Inject constructor(
         val place: String,
     ) : State()
 
+    /**
+     * Получает модель события по uid.
+     */
     init {
         viewModelScope.launch {
             if (uid != null) {
@@ -54,6 +57,14 @@ class CreateEventViewModel @Inject constructor(
         }
     }
 
+    /** Создает событие.
+     * @param name имя события.
+     * @param date дата события.
+     * @param place место проведения события.
+     * При пустых полях отправляет событие [ErrorState].
+     * Если событие уже существует, обновляет его, отправляет событие [NavigateMainState], которое перенаправляет на главный экран.
+     * При успешном создании отправляет событие [NavigateMainState], которое перенаправляет на главный экран.
+     */
     fun createEvent(name: String, date: String, place: String) {
         viewModelScope.launch {
             if (name.isEmpty() || date.isEmpty() || place.isEmpty()) {

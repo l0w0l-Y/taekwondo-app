@@ -26,18 +26,21 @@ class MainRepositoryImpl @Inject constructor(
     @IoDispatcher val dispatcher: CoroutineDispatcher,
     private val dataStoreProvider: DataStoreProvider,
 ) : MainRepository {
+    //Получение всех бойцов
     override suspend fun getAllFighters(): Effect<List<FighterEntity>> {
         return callDB(dispatcher) {
             fighterDao.getAllFighters()
         }
     }
 
+    //Получение всех событий
     override suspend fun getAllEvents(): Effect<List<EventEntity>> {
         return callDB(dispatcher) {
             eventDao.getAllEvents()
         }
     }
 
+    //Выход из аккаунта
     override suspend fun logOut(): Effect<Unit> {
         try {
             dataStoreProvider.remove(UID_KEY)

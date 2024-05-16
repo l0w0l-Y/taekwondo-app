@@ -11,18 +11,39 @@ import com.taekwondo.coredata.network.entity.EventParticipants
 
 @Dao
 interface EventParticipantsDao {
+    /**
+     * Вставляет новый EventParticipants в базу данных. Если уже есть, заменяет.
+     * @param entity EventParticipants, который нужно вставить.
+     */
     @Transaction
     @Query("SELECT * FROM event WHERE eventId = :eventId")
     fun getEventParticipants(eventId: Long): EventParticipants?
 
+    /**
+     * Вставляет новый EventJudgeCrossRef (отношение eventId и judgeId) в базу данных. Если уже есть, заменяет.
+     * @param entity EventJudgeCrossRef, который нужно вставить.
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEventJudgeCrossRef(crossRef: EventJudgeCrossRef)
 
+    /**
+     * Вставляет новый EventFighterCrossRef (отношение eventId и fighterId) в базу данных. Если уже есть, заменяет.
+     * @param entity EventFighterCrossRef, который нужно вставить.
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEventFighterCrossRef(crossRef: EventFighterCrossRef)
 
+    /**
+     * Удаляет EventFighterCrossRef (отношение eventId и fighterId) из базы данных.
+     * @param eventId Идентификатор события.
+     */
     @Query("DELETE FROM eventfightercrossref WHERE eventId = :eventId")
     fun removeEventFighterCrossRef(eventId: Long)
+
+    /**
+     * Удаляет EventJudgeCrossRef (отношение eventId и judgeId) из базы данных.
+     * @param eventId Идентификатор события.
+     */
     @Query("DELETE FROM eventjudgecrossref WHERE eventId = :eventId")
     fun removeEventJudgeCrossRef(eventId: Long)
 }

@@ -41,6 +41,7 @@ class FighterRepositoryImpl @Inject constructor(
     @IoDispatcher val dispatcher: CoroutineDispatcher,
     private val fighterDao: FighterDao,
 ) : FighterRepository {
+    //Создание бойца
     override suspend fun createFighter(
         name: String,
         age: Float,
@@ -63,12 +64,14 @@ class FighterRepositoryImpl @Inject constructor(
         }
     }
 
+    //Получение всех бойцов
     override suspend fun getAllFighters(): Effect<List<FighterEntity>> {
         return callDB(dispatcher) {
             fighterDao.getAllFighters()
         }
     }
 
+    //Получение бойца по идентификатору
     override suspend fun getFighter(uid: Long): Effect<FighterEntity> {
         return callDB(dispatcher) {
             fighterDao.getFighter(uid)
@@ -81,6 +84,7 @@ class FighterRepositoryImpl @Inject constructor(
         }
     }
 
+    //Обновление бойца
     override suspend fun updateFighter(
         uid: Long,
         name: String,
@@ -105,6 +109,7 @@ class FighterRepositoryImpl @Inject constructor(
         }
     }
 
+    //Удаление бойца
     override suspend fun deleteFighter(uid: Long): Effect<Unit> {
         return callDB(dispatcher) {
             fighterDao.deleteFighter(uid)

@@ -37,18 +37,22 @@ class EventRepositoryImpl @Inject constructor(
     private val eventDao: EventDao,
     private val eventParticipantsDao: EventParticipantsDao,
 ) : EventRepository {
+
+    //Создание события
     override suspend fun createEvent(name: String, date: String, place: String): Effect<Unit> {
         return callDB(ioDispatcher) {
             eventDao.insert(EventEntity(name = name, date = date, place = place))
         }
     }
 
+    //Получение всех событий
     override suspend fun getAllEvents(): Effect<Unit> {
         return callDB(ioDispatcher) {
             eventDao.getAllEvents()
         }
     }
 
+    //Добавление участников события
     override suspend fun insertEventParticipants(
         uidEvent: Long,
         users: List<Long>,
@@ -78,6 +82,7 @@ class EventRepositoryImpl @Inject constructor(
         }
     }
 
+    //Обновление события
     override suspend fun updateEvent(
         uid: Long,
         name: String,
@@ -96,6 +101,7 @@ class EventRepositoryImpl @Inject constructor(
         }
     }
 
+    //Получение участников события
     override suspend fun getEventParticipants(uid: Long): Effect<EventParticipants?> {
         return callDB(ioDispatcher) {
             eventParticipantsDao.getEventParticipants(uid).apply {

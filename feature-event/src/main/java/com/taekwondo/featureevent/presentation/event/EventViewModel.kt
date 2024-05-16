@@ -29,6 +29,9 @@ class EventViewModel @Inject constructor(
     class NavigateUpdateParticipantsState(val uid: Long) : State()
     class NavigateUpdateEventState(val uid: Long) : State()
 
+    /**
+     * Получает модель события по uid.
+     */
     init {
         viewModelScope.launch {
             interactor.getEventModel(uid).doOnSuccess {
@@ -37,12 +40,18 @@ class EventViewModel @Inject constructor(
         }
     }
 
-    fun updateParticipants() {
+    /**
+     * Перенаправляет на экран обновления участников.
+     */
+    fun onUpdateParticipants() {
         viewModelScope.launch {
             event.send(NavigateUpdateParticipantsState(uid))
         }
     }
 
+    /**
+     * Перенаправляет на экран обновления события.
+     */
     fun onUpdateEvent(){
         viewModelScope.launch {
             event.send(NavigateUpdateEventState(uid))

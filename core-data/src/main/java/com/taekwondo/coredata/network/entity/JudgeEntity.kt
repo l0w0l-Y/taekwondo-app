@@ -4,6 +4,16 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ * Сущность, представляющая судью.
+ * @param uid Идентификатор судьи.
+ * @param name Имя судьи.
+ * @param username Логин судьи.
+ * @param email Почта судьи.
+ * @param password Пароль судьи.
+ * @param phone Телефон судьи.
+ * @param photo Фотография судьи.
+ */
 @Entity(tableName = "judge")
 data class JudgeEntity(
     @PrimaryKey(autoGenerate = true)

@@ -3,11 +3,10 @@ package com.taekwondo.featurefighter.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.taekwondo.featurefighter.domain.FighterInteractor
 import com.taekwondo.corecommon.ext.EventChannel
 import com.taekwondo.coredata.network.doOnSuccess
+import com.taekwondo.featurefighter.domain.FighterInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +17,6 @@ class CreateFighterViewModel @Inject constructor(
 ) : ViewModel() {
     private val uid = savedStateHandle.get<Long?>("uid")
     private val type = savedStateHandle.get<String?>("type")
-    val state = MutableStateFlow<ScreenType>(Create)
 
     sealed class ScreenType
     object Update : ScreenType()
@@ -40,7 +38,9 @@ class CreateFighterViewModel @Inject constructor(
 
     val event = EventChannel<State>()
 
-
+    /**
+     * Получает модель бойца по uid.
+     */
     init {
         viewModelScope.launch {
             if (uid != null) {
@@ -59,23 +59,20 @@ class CreateFighterViewModel @Inject constructor(
                         )
                     }
             }
-
-            when (type) {
-                "update" -> {
-                    state.emit(Update)
-                }
-
-                "read" -> {
-                    state.emit(Read)
-                }
-
-                else -> {
-                    state.emit(Create)
-                }
-            }
         }
     }
 
+    /** Сохраняет бойца.
+     * @param name имя бойца.
+     * @param age возраст бойца.
+     * @param weight вес бойца.
+     * @param height рост бойца.
+     * @param weightCategory весовая категория бойца.
+     * @param photo фото бойца.
+     * При пустых полях отправляет событие [ErrorState].
+     * Если боец уже существует, обновляет его, отправляет событие [NavigateMainState], которое перенаправляет на главный экран.
+     * При успешном создании отправляет событие [NavigateMainState], которое перенаправляет на главный экран.
+     */
     fun onSaveClick(
         name: String,
         age: Float?,
@@ -103,7 +100,11 @@ class CreateFighterViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteFighter(){
+    /**
+     * Удаляет бойца.
+     * Перенаправляет на главный экран.
+     */
+    fun onDeleteFighter() {
         viewModelScope.launch {
             if (uid != null) {
                 interactor.deleteFighter(uid)

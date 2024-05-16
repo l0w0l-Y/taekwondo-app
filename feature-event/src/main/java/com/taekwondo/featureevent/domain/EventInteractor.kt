@@ -84,7 +84,7 @@ class EventInteractorImpl @Inject constructor(
     }
 
     override suspend fun getAllUsers(): Effect<List<JudgeModel>> {
-        return userRepository.getAllUsers().map { users ->
+        return userRepository.getAllJudges().map { users ->
             users?.map {
                 JudgeModel(
                     uid = it.uid,

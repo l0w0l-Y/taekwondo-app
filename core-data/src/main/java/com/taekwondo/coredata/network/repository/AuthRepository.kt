@@ -26,7 +26,7 @@ interface AuthRepository {
         photo: String,
     ): Effect<Unit>
 
-    suspend fun getAllUsers(): Effect<List<JudgeEntity>>
+    suspend fun getAllJudges(): Effect<List<JudgeEntity>>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -34,6 +34,7 @@ class AuthRepositoryImpl @Inject constructor(
     @IoDispatcher val dispatcher: CoroutineDispatcher,
     private val dataStoreProvider: DataStoreProvider,
 ) : AuthRepository {
+    //Авторизация судьи
     override suspend fun auth(email: String, password: String): Effect<Completable> {
         return callDB(dispatcher) {
             dao.getUserByEmail(email)
@@ -47,6 +48,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    //Регистрация судьи
     override suspend fun register(
         name: String,
         username: String,
@@ -74,9 +76,10 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllUsers(): Effect<List<JudgeEntity>> {
+    //Получение всех судей
+    override suspend fun getAllJudges(): Effect<List<JudgeEntity>> {
         return callDB(dispatcher) {
-            dao.getAllUsers()
+            dao.getAllJudges()
         }
     }
 }

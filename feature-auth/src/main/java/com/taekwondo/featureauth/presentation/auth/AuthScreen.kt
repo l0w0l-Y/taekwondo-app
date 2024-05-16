@@ -48,6 +48,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 fun AuthScreen(navController: NavController, viewModel: AuthViewModel = hiltViewModel()) {
     val event = viewModel.event.receiveAsFlow()
     val context = LocalContext.current
+    val errorMessage = string(id = R.string.error_invalid_email_or_password)
     event.observe {
         when (it) {
             AuthViewModel.NavigateMainState -> {
@@ -59,11 +60,15 @@ fun AuthScreen(navController: NavController, viewModel: AuthViewModel = hiltView
             }
 
             AuthViewModel.ErrorState -> {
-                Toast.makeText(context, "Неправильный логин или пароль", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    errorMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
-    AuthScreen(viewModel::auth) { navController.navigate(RegisterDirection) }
+    AuthScreen(viewModel::onAuth) { navController.navigate(RegisterDirection) }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

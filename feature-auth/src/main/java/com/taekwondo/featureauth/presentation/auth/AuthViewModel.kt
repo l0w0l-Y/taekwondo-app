@@ -20,7 +20,14 @@ class AuthViewModel @Inject constructor(
 
     val event = EventChannel<State>()
 
-    fun auth(email: String, password: String) {
+    /**
+     * Авторизует пользователя.
+     * @param email почта пользователя.
+     * @param password пароль пользователя.
+     * При успешной авторизации отправляет событие [NavigateMainState], которое перенаправляет на главный экран.
+     * При ошибке отправляет событие [ErrorState], которое выводит ошибку.
+     */
+    fun onAuth(email: String, password: String) {
         viewModelScope.launch {
             interactor
                 .auth(email, password)

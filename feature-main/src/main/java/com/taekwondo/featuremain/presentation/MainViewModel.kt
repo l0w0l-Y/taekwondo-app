@@ -30,6 +30,9 @@ class MainViewModel @Inject constructor(
 
     val event = EventChannel<State>()
 
+    /**
+     * Получает список бойцов и событий.
+     */
     init {
         viewModelScope.launch {
             mainInteractor.getAllFighters()
@@ -61,6 +64,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Выход из аккаунта.
+     */
     fun logOut() {
         viewModelScope.launch {
             mainInteractor.logOut().doOnSuccess {

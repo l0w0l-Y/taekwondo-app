@@ -57,7 +57,7 @@ fun EventScreen(navController: NavController, viewModel: EventViewModel = hiltVi
     }
     EventScreen(
         eventModel = eventModel,
-        onUpdateParticipants = viewModel::updateParticipants,
+        onUpdateParticipants = viewModel::onUpdateParticipants,
         onUpdateEvent = viewModel::onUpdateEvent
     )
 }
