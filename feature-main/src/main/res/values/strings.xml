@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_events">Соревнования %s</string>
+    <string name="title_archive">Архив %s</string>
     <string name="title_fighters">Бойцы %s</string>
     <string name="button_create_fighter">Создать бойца</string>
     <string name="button_create_event">Создать соревнование</string>

@@ -17,22 +17,26 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.taekwondo.featuremain.presentation.model.EventModel
-import com.taekwondo.featuremain.presentation.model.FighterModel
 import com.taekwondo.corecommon.ext.observe
 import com.taekwondo.corenavigation.AuthDirection
 import com.taekwondo.corenavigation.CreateEventDirection
@@ -43,12 +47,15 @@ import com.taekwondo.corenavigation.navigate
 import com.taekwondo.coretheme.Dimen
 import com.taekwondo.coreui.compose.string
 import com.taekwondo.featuremain.R
+import com.taekwondo.featuremain.presentation.model.EventModel
+import com.taekwondo.featuremain.presentation.model.FighterModel
 import kotlinx.coroutines.flow.receiveAsFlow
 
 @Composable
 fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     val fighters by viewModel.fighters.collectAsState()
     val events by viewModel.events.collectAsState()
+    val archive by viewModel.archive.collectAsState()
     val event = viewModel.event.receiveAsFlow()
     event.observe {
         when (it) {
@@ -64,6 +71,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltView
     MainScreen(
         fighters = fighters,
         events = events,
+        archive = archive,
         { navController.navigate(CreateFighterDirection) },
         { navController.navigate(CreateEventDirection) },
         { uid -> navController.navigate("${ReadFighterDirection.path}?uid=$uid") },
@@ -76,12 +84,18 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltView
 fun MainScreen(
     fighters: List<FighterModel>,
     events: List<EventModel>,
+    archive: List<EventModel>,
     createFighter: () -> Unit,
     createEvent: () -> Unit,
     updateFighter: (Long) -> Unit,
     logOut: () -> Unit,
     onOpenEvent: (Long) -> Unit,
 ) {
+    var tabIndex by remember { mutableIntStateOf(0) }
+    val tabs = listOf(
+        string(id = R.string.title_events, events.size),
+        string(id = R.string.title_archive, archive.size)
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -146,32 +160,71 @@ fun MainScreen(
                     }
                 }
             }
-            Text(
-                text = string(id = R.string.title_events, events.size),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = Dimen.padding_20)
-            )
-            LazyColumn(
-                modifier = Modifier.padding(top = Dimen.padding_12),
-                verticalArrangement = Arrangement.spacedBy(Dimen.padding_4)
-            ) {
-                items(events) {
-                    Text(
-                        text = it.name,
-                        modifier = Modifier
-                            .background(
-                                MaterialTheme.colorScheme.surface,
-                                RoundedCornerShape(Dimen.radius_8)
-                            )
-                            .clip(RoundedCornerShape(Dimen.radius_8))
-                            .clickable {
-                                onOpenEvent(it.uid)
+            Column(modifier = Modifier.fillMaxWidth()) {
+                TabRow(
+                    selectedTabIndex = tabIndex,
+                    containerColor = Color.Transparent,
+                    divider = {}
+                ) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(text = { Text(title) },
+                            selected = tabIndex == index,
+                            onClick = { tabIndex = index }
+                        )
+                    }
+                }
+                when (tabIndex) {
+                    0 -> {
+                        LazyColumn(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(top = Dimen.padding_12),
+                            verticalArrangement = Arrangement.spacedBy(Dimen.padding_4),
+                        ) {
+                            items(events) {
+                                Text(
+                                    text = it.name,
+                                    modifier = Modifier
+                                        .background(
+                                            MaterialTheme.colorScheme.surface,
+                                            RoundedCornerShape(Dimen.radius_8)
+                                        )
+                                        .clip(RoundedCornerShape(Dimen.radius_8))
+                                        .clickable {
+                                            onOpenEvent(it.uid)
+                                        }
+                                        .padding(Dimen.padding_12)
+                                        .fillMaxWidth()
+                                )
                             }
-                            .padding(Dimen.padding_12)
-                            .fillMaxWidth()
+                        }
+                    }
 
-                    )
+                    1 -> {
+                        LazyColumn(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(top = Dimen.padding_12),
+                            verticalArrangement = Arrangement.spacedBy(Dimen.padding_4),
+                        ) {
+                            items(archive) {
+                                Text(
+                                    text = it.name,
+                                    modifier = Modifier
+                                        .background(
+                                            MaterialTheme.colorScheme.surface,
+                                            RoundedCornerShape(Dimen.radius_8)
+                                        )
+                                        .clip(RoundedCornerShape(Dimen.radius_8))
+                                        .clickable {
+                                            onOpenEvent(it.uid)
+                                        }
+                                        .padding(Dimen.padding_12)
+                                        .fillMaxWidth()
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

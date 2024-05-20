@@ -9,6 +9,7 @@ import com.taekwondo.coredata.network.entity.EventEntity
 import com.taekwondo.coredata.network.entity.EventFighterCrossRef
 import com.taekwondo.coredata.network.entity.EventJudgeCrossRef
 import com.taekwondo.coredata.network.entity.EventParticipants
+import com.taekwondo.coredata.network.entity.EventStatus
 import com.taekwondo.coredata.network.entity.FightEntity
 import com.taekwondo.coredata.network.entity.FighterEntity
 import com.taekwondo.coredata.network.model.FightModel
@@ -18,7 +19,6 @@ import javax.inject.Inject
 interface EventRepository {
     suspend fun createEvent(name: String, date: String, place: String): Effect<Unit>
     suspend fun getAllEvents(): Effect<Unit>
-
     suspend fun insertEventParticipants(
         uidEvent: Long,
         users: List<Long>,
@@ -36,7 +36,10 @@ interface EventRepository {
     suspend fun savePoints(
         points: List<FightModel>
     ): Effect<Unit>
+
     suspend fun getFightersEvent(eventId: Long): Effect<List<FighterEntity>>
+    suspend fun deleteEvent(eventId: Long): Effect<Unit>
+    suspend fun archiveEvent(eventId: Long): Effect<Unit>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -141,6 +144,20 @@ class EventRepositoryImpl @Inject constructor(
     override suspend fun getFightersEvent(eventId: Long): Effect<List<FighterEntity>> {
         return callDB(ioDispatcher) {
             eventParticipantsDao.getFightersEvent(eventId)
+        }
+    }
+
+    override suspend fun deleteEvent(eventId: Long): Effect<Unit> {
+        return callDB(ioDispatcher) {
+            eventDao.deleteEvent(eventId)
+        }
+    }
+
+    override suspend fun archiveEvent(eventId: Long): Effect<Unit> {
+        return callDB(ioDispatcher) {
+            eventDao.getEvent(eventId)?.let {
+                eventDao.update(it.copy(status = EventStatus.FINISHED))
+            }
         }
     }
 }

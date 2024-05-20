@@ -1,6 +1,7 @@
 package com.taekwondo.featureevent.domain
 
 import com.taekwondo.coredata.network.Effect
+import com.taekwondo.coredata.network.entity.EventStatus
 import com.taekwondo.coredata.network.map
 import com.taekwondo.coredata.network.model.FightModel
 import com.taekwondo.coredata.network.repository.AuthRepository
@@ -10,6 +11,7 @@ import com.taekwondo.featureevent.presentation.model.EventModel
 import com.taekwondo.featureevent.presentation.model.FighterModel
 import com.taekwondo.featureevent.presentation.model.JudgeModel
 import javax.inject.Inject
+import com.taekwondo.featureevent.presentation.model.EventStatus as EventStatusModel
 
 interface EventInteractor {
     suspend fun createEvent(name: String, date: String, place: String): Effect<Unit>
@@ -20,17 +22,17 @@ interface EventInteractor {
         users: List<Long>,
         fighters: List<Long>
     ): Effect<Unit>
-
     suspend fun getEventModel(uid: Long): Effect<EventModel?>
     suspend fun getAllFighters(): Effect<List<FighterModel>>
     suspend fun getAllUsers(): Effect<List<JudgeModel>>
     suspend fun savePoints(
         points: List<FightModel>
     ): Effect<Unit>
-
     suspend fun getFightersEvent(
         eventId: Long
     ): Effect<List<FighterModel>>
+    suspend fun deleteEvent(eventId: Long): Effect<Unit>
+    suspend fun archiveEvent(eventId: Long): Effect<Unit>
 }
 
 class EventInteractorImpl @Inject constructor(
@@ -72,7 +74,11 @@ class EventInteractorImpl @Inject constructor(
                     date = eventParticipantsEntity.event.date,
                     place = eventParticipantsEntity.event.place,
                     fighters = eventParticipantsEntity.fighters,
-                    users = eventParticipantsEntity.judges
+                    users = eventParticipantsEntity.judges,
+                    status = when (eventParticipantsEntity.event.status) {
+                        EventStatus.IN_PROGRESS -> EventStatusModel.IN_PROGRESS
+                        EventStatus.FINISHED -> EventStatusModel.FINISHED
+                    }
                 )
             }
         }
@@ -120,5 +126,13 @@ class EventInteractorImpl @Inject constructor(
                 )
             } ?: emptyList()
         }
+    }
+
+    override suspend fun deleteEvent(eventId: Long): Effect<Unit> {
+        return eventRepository.deleteEvent(eventId)
+    }
+
+    override suspend fun archiveEvent(eventId: Long): Effect<Unit> {
+        return eventRepository.archiveEvent(eventId)
     }
 }

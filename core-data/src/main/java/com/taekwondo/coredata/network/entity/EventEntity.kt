@@ -22,4 +22,11 @@ data class EventEntity(
     val date: String,
     @ColumnInfo(name = "place")
     val place: String,
+    @ColumnInfo(name = "type")
+    val status: EventStatus = EventStatus.IN_PROGRESS,
 )
+
+enum class EventStatus {
+    IN_PROGRESS,
+    FINISHED,
+}

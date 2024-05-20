@@ -28,15 +28,17 @@ class EventViewModel @Inject constructor(
     sealed class State
     class NavigateUpdateParticipantsState(val uid: Long) : State()
     class NavigateUpdateEventState(val uid: Long) : State()
+    class NavigateMainState(val uid: Long) : State()
 
     /**
      * Получает модель события по uid.
      */
     init {
         viewModelScope.launch {
-            interactor.getEventModel(uid).doOnSuccess {
-                _eventModel.emit(it)
-            }
+            interactor.getEventModel(uid)
+                .doOnSuccess {
+                    _eventModel.emit(it)
+                }
         }
     }
 
@@ -52,9 +54,27 @@ class EventViewModel @Inject constructor(
     /**
      * Перенаправляет на экран обновления события.
      */
-    fun onUpdateEvent(){
+    fun onUpdateEvent() {
         viewModelScope.launch {
             event.send(NavigateUpdateEventState(uid))
+        }
+    }
+
+    fun onCompleteEvent() {
+        viewModelScope.launch {
+            interactor.archiveEvent(uid)
+                .doOnSuccess {
+                    event.send(NavigateMainState(uid))
+                }
+        }
+    }
+
+    fun onDeleteEvent() {
+        viewModelScope.launch {
+            interactor.deleteEvent(uid)
+                .doOnSuccess {
+                    event.send(NavigateMainState(uid))
+                }
         }
     }
 }

@@ -20,10 +20,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,12 +38,14 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.taekwondo.corecommon.ext.observe
 import com.taekwondo.corenavigation.JudgingDirection
+import com.taekwondo.corenavigation.MainDirection
 import com.taekwondo.corenavigation.UpdateEventDirection
 import com.taekwondo.corenavigation.UpdateEventFighterDirection
 import com.taekwondo.coretheme.Dimen
 import com.taekwondo.coreui.compose.string
 import com.taekwondo.featureevent.R
 import com.taekwondo.featureevent.presentation.model.EventModel
+import com.taekwondo.featureevent.presentation.model.EventStatus
 import kotlinx.coroutines.flow.receiveAsFlow
 
 @Composable
@@ -60,13 +65,23 @@ fun EventScreen(
             is EventViewModel.NavigateUpdateEventState -> {
                 navController.navigate("${UpdateEventDirection.path}?uid=${it.uid}")
             }
+
+            is EventViewModel.NavigateMainState -> {
+                navController.navigate(MainDirection.path) {
+                    popUpTo(MainDirection.path) {
+                        inclusive = true
+                    }
+                }
+            }
         }
     }
     EventScreen(
         eventModel = eventModel,
         onUpdateParticipants = viewModel::onUpdateParticipants,
         onUpdateEvent = viewModel::onUpdateEvent,
-        onJudging = { navController.navigate("${JudgingDirection.path}?eventId=$eventId") }
+        onJudging = { navController.navigate("${JudgingDirection.path}?eventId=$eventId") },
+        onCompleteEvent = viewModel::onCompleteEvent,
+        onDeleteEvent = viewModel::onDeleteEvent,
     )
 }
 
@@ -76,6 +91,8 @@ fun EventScreen(
     onUpdateParticipants: () -> Unit,
     onUpdateEvent: () -> Unit,
     onJudging: () -> Unit,
+    onCompleteEvent: () -> Unit,
+    onDeleteEvent: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -97,21 +114,52 @@ fun EventScreen(
                     Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
                 }
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = Dimen.padding_12)
-            ) {
-                Button(
-                    onClick = onJudging,
-                    modifier = Modifier.align(Alignment.Center)
-                ) {
-                    Text(text = string(R.string.button_judging))
+            when (eventModel.status) {
+                EventStatus.IN_PROGRESS -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = Dimen.padding_12)
+                    ) {
+                        Button(
+                            onClick = onJudging,
+                            modifier = Modifier.align(Alignment.Center)
+                        ) {
+                            Text(text = string(R.string.button_judging))
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = Dimen.padding_4)
+                    ) {
+                        Button(
+                            onClick = onCompleteEvent,
+                            modifier = Modifier.align(Alignment.Center)
+                        ) {
+                            Text(text = string(R.string.button_complete_event))
+                        }
+                    }
+                }
+
+                EventStatus.FINISHED -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = Dimen.padding_12)
+                    ) {
+                        Button(
+                            onClick = onDeleteEvent,
+                            modifier = Modifier.align(Alignment.Center)
+                        ) {
+                            Text(text = string(R.string.button_delete_event))
+                        }
+                    }
                 }
             }
             Row(
                 modifier = Modifier.padding(top = Dimen.padding_20),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     string(R.string.title_judges_size, eventModel.users.size),

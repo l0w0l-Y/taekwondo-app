@@ -41,4 +41,7 @@ interface EventDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertFightEntity(fightEntity: FightEntity)
+
+    @Query("DELETE FROM event where eventId = :uid")
+    fun deleteEvent(uid: Long)
 }

@@ -25,4 +25,6 @@
     <string name="title_points">Очки: %s</string>
     <string name="title_kicks">Удары</string>
     <string name="title_warnings">Предупреждения</string>
+    <string name="button_complete_event">Завершить соревнование</string>
+    <string name="button_delete_event">Удалить соревнование</string>
 </resources>
