@@ -2,9 +2,11 @@ package com.taekwondo.coredata.network.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.taekwondo.coredata.network.entity.EventEntity
+import com.taekwondo.coredata.network.entity.FightEntity
 
 @Dao
 interface EventDao {
@@ -36,4 +38,7 @@ interface EventDao {
      */
     @Query("SELECT * FROM event WHERE eventId = :uid")
     fun getEvent(uid: Long): EventEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertFightEntity(fightEntity: FightEntity)
 }

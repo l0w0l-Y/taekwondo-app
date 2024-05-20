@@ -8,6 +8,7 @@ import androidx.room.Transaction
 import com.taekwondo.coredata.network.entity.EventFighterCrossRef
 import com.taekwondo.coredata.network.entity.EventJudgeCrossRef
 import com.taekwondo.coredata.network.entity.EventParticipants
+import com.taekwondo.coredata.network.entity.FighterEntity
 
 @Dao
 interface EventParticipantsDao {
@@ -46,4 +47,7 @@ interface EventParticipantsDao {
      */
     @Query("DELETE FROM eventjudgecrossref WHERE eventId = :eventId")
     fun removeEventJudgeCrossRef(eventId: Long)
+
+    @Query("SELECT * FROM fighter WHERE fighterId IN (SELECT fighterId FROM eventfightercrossref WHERE eventId = :eventId)")
+    fun getFightersEvent(eventId: Long): List<FighterEntity>
 }

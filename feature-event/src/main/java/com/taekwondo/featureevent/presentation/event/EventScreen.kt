@@ -1,6 +1,7 @@
 package com.taekwondo.featureevent.presentation.event
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.taekwondo.corecommon.ext.observe
+import com.taekwondo.corenavigation.JudgingDirection
 import com.taekwondo.corenavigation.UpdateEventDirection
 import com.taekwondo.corenavigation.UpdateEventFighterDirection
 import com.taekwondo.coretheme.Dimen
@@ -41,7 +44,11 @@ import com.taekwondo.featureevent.presentation.model.EventModel
 import kotlinx.coroutines.flow.receiveAsFlow
 
 @Composable
-fun EventScreen(navController: NavController, viewModel: EventViewModel = hiltViewModel()) {
+fun EventScreen(
+    navController: NavController,
+    eventId: Long?,
+    viewModel: EventViewModel = hiltViewModel()
+) {
     val eventModel by viewModel.eventModel.collectAsState()
     val event = viewModel.event.receiveAsFlow()
     event.observe {
@@ -58,7 +65,8 @@ fun EventScreen(navController: NavController, viewModel: EventViewModel = hiltVi
     EventScreen(
         eventModel = eventModel,
         onUpdateParticipants = viewModel::onUpdateParticipants,
-        onUpdateEvent = viewModel::onUpdateEvent
+        onUpdateEvent = viewModel::onUpdateEvent,
+        onJudging = { navController.navigate("${JudgingDirection.path}?eventId=$eventId") }
     )
 }
 
@@ -67,6 +75,7 @@ fun EventScreen(
     eventModel: EventModel?,
     onUpdateParticipants: () -> Unit,
     onUpdateEvent: () -> Unit,
+    onJudging: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -86,6 +95,18 @@ fun EventScreen(
                 }
                 IconButton(onClick = onUpdateEvent) {
                     Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = Dimen.padding_12)
+            ) {
+                Button(
+                    onClick = onJudging,
+                    modifier = Modifier.align(Alignment.Center)
+                ) {
+                    Text(text = string(R.string.button_judging))
                 }
             }
             Row(

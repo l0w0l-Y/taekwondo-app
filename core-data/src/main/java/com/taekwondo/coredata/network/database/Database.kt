@@ -10,6 +10,7 @@ import com.taekwondo.coredata.network.dao.FighterDao
 import com.taekwondo.coredata.network.entity.EventEntity
 import com.taekwondo.coredata.network.entity.EventFighterCrossRef
 import com.taekwondo.coredata.network.entity.EventJudgeCrossRef
+import com.taekwondo.coredata.network.entity.FightEntity
 import com.taekwondo.coredata.network.entity.FighterEntity
 import com.taekwondo.coredata.network.entity.JudgeEntity
 
@@ -19,8 +20,10 @@ import com.taekwondo.coredata.network.entity.JudgeEntity
         FighterEntity::class,
         EventEntity::class,
         EventJudgeCrossRef::class,
-        EventFighterCrossRef::class],
-    version = 16,
+        EventFighterCrossRef::class,
+        FightEntity::class,
+    ],
+    version = 18,
     exportSchema = false
 )
 abstract class Database : RoomDatabase() {

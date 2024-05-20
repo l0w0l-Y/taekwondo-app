@@ -9,6 +9,9 @@ import com.taekwondo.coredata.network.entity.EventEntity
 import com.taekwondo.coredata.network.entity.EventFighterCrossRef
 import com.taekwondo.coredata.network.entity.EventJudgeCrossRef
 import com.taekwondo.coredata.network.entity.EventParticipants
+import com.taekwondo.coredata.network.entity.FightEntity
+import com.taekwondo.coredata.network.entity.FighterEntity
+import com.taekwondo.coredata.network.model.FightModel
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
@@ -30,6 +33,10 @@ interface EventRepository {
     ): Effect<Unit>
 
     suspend fun getEventParticipants(uid: Long): Effect<EventParticipants?>
+    suspend fun savePoints(
+        points: List<FightModel>
+    ): Effect<Unit>
+    suspend fun getFightersEvent(eventId: Long): Effect<List<FighterEntity>>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -112,6 +119,28 @@ class EventRepositoryImpl @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    override suspend fun savePoints(points: List<FightModel>): Effect<Unit> {
+        return callDB(ioDispatcher) {
+            points.forEach {
+                eventDao.insertFightEntity(
+                    FightEntity(
+                        eventId = it.eventId,
+                        fighterId = it.fighterId,
+                        judgeId = it.judgeId,
+                        points = it.points,
+                        round = it.round
+                    )
+                )
+            }
+        }
+    }
+
+    override suspend fun getFightersEvent(eventId: Long): Effect<List<FighterEntity>> {
+        return callDB(ioDispatcher) {
+            eventParticipantsDao.getFightersEvent(eventId)
         }
     }
 }

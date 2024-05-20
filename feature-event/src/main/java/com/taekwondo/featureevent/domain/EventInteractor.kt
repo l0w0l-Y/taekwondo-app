@@ -2,6 +2,7 @@ package com.taekwondo.featureevent.domain
 
 import com.taekwondo.coredata.network.Effect
 import com.taekwondo.coredata.network.map
+import com.taekwondo.coredata.network.model.FightModel
 import com.taekwondo.coredata.network.repository.AuthRepository
 import com.taekwondo.coredata.network.repository.EventRepository
 import com.taekwondo.coredata.network.repository.FighterRepository
@@ -23,6 +24,13 @@ interface EventInteractor {
     suspend fun getEventModel(uid: Long): Effect<EventModel?>
     suspend fun getAllFighters(): Effect<List<FighterModel>>
     suspend fun getAllUsers(): Effect<List<JudgeModel>>
+    suspend fun savePoints(
+        points: List<FightModel>
+    ): Effect<Unit>
+
+    suspend fun getFightersEvent(
+        eventId: Long
+    ): Effect<List<FighterModel>>
 }
 
 class EventInteractorImpl @Inject constructor(
@@ -90,6 +98,23 @@ class EventInteractorImpl @Inject constructor(
                     uid = it.uid,
                     name = it.name,
                     username = it.username,
+                    photo = it.photo,
+                    isPicked = false
+                )
+            } ?: emptyList()
+        }
+    }
+
+    override suspend fun savePoints(points: List<FightModel>): Effect<Unit> {
+        return eventRepository.savePoints(points)
+    }
+
+    override suspend fun getFightersEvent(eventId: Long): Effect<List<FighterModel>> {
+        return eventRepository.getFightersEvent(eventId).map { fighters ->
+            fighters?.map {
+                FighterModel(
+                    uid = it.uid,
+                    name = it.name,
                     photo = it.photo,
                     isPicked = false
                 )

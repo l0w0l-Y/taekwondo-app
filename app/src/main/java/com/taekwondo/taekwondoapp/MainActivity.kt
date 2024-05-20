@@ -14,12 +14,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.taekwondo.featurefighter.presentation.CreateFighterScreen
-import com.taekwondo.featurefighter.presentation.CreateFighterViewModel
-import com.taekwondo.featuremain.presentation.MainScreen
 import com.taekwondo.corenavigation.AuthDirection
 import com.taekwondo.corenavigation.CreateEventDirection
 import com.taekwondo.corenavigation.CreateFighterDirection
+import com.taekwondo.corenavigation.JudgingDirection
 import com.taekwondo.corenavigation.MainDirection
 import com.taekwondo.corenavigation.ReadEventDirection
 import com.taekwondo.corenavigation.ReadFighterDirection
@@ -32,8 +30,12 @@ import com.taekwondo.featureauth.presentation.auth.AuthScreen
 import com.taekwondo.featureauth.presentation.register.RegisterScreen
 import com.taekwondo.featureevent.presentation.event.EventScreen
 import com.taekwondo.featureevent.presentation.fighters.UpdateEventFighterScreen
+import com.taekwondo.featureevent.presentation.judging.JudgingScreen
 import com.taekwondo.featureevent.presentation.update.CreateEventScreen
 import com.taekwondo.featureevent.presentation.update.CreateEventViewModel
+import com.taekwondo.featurefighter.presentation.CreateFighterScreen
+import com.taekwondo.featurefighter.presentation.CreateFighterViewModel
+import com.taekwondo.featuremain.presentation.MainScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -91,8 +93,8 @@ class MainActivity : ComponentActivity() {
                                     arguments = listOf(
                                         navArgument("uid") { type = NavType.LongType },
                                     )
-                                ) {
-                                    EventScreen(navController = navController)
+                                ) {backStackEntry ->
+                                    EventScreen(navController = navController, backStackEntry.arguments?.getLong("uid"))
                                 }
                                 composable(
                                     CreateEventDirection.path,
@@ -120,6 +122,14 @@ class MainActivity : ComponentActivity() {
                                     )
                                 ) {
                                     UpdateEventFighterScreen(navController = navController)
+                                }
+                                composable(
+                                    JudgingDirection.path + "?eventId={eventId}",
+                                    arguments = listOf(
+                                        navArgument("eventId") { type = NavType.LongType },
+                                    )
+                                ) {
+                                    JudgingScreen(navController = navController)
                                 }
                             }
                         }
