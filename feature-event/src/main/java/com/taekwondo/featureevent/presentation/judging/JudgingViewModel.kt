@@ -49,19 +49,19 @@ class JudgingViewModel @Inject constructor(
     }
 
     fun savePoints(
-        list: List<Float>,
+        list: Pair<Float, Float>,
     ) {
         viewModelScope.launch {
             interactor.savePoints(
-                list.mapIndexed { index, points ->
-                    FightModel(
-                        eventId,
-                        selectedFighters.value.getOrNull(index)?.uid ?: return@launch,
-                        judgeId,
-                        points.toInt(),
-                        round.value
-                    )
-                }
+                FightModel(
+                    eventId,
+                    selectedFighters.value.getOrNull(0)?.uid ?: return@launch,
+                    selectedFighters.value.getOrNull(1)?.uid
+                        ?: selectedFighters.value.getOrNull(0)!!.uid,
+                    judgeId,
+                    list.first.toInt(),
+                    list.second.toInt(),
+                )
             ).doOnSuccess {
                 round.value++
             }

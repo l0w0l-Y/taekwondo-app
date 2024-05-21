@@ -2,7 +2,6 @@ package com.taekwondo.coredata.network.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "fight", foreignKeys = [
@@ -21,15 +20,22 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = FighterEntity::class,
             parentColumns = ["fighterId"],
-            childColumns = ["fighterId"],
+            childColumns = ["fighterId1"],
             onDelete = ForeignKey.CASCADE
-        )
-    ], primaryKeys = ["eventId", "judgeId", "fighterId", "round"]
+        ),
+        ForeignKey(
+            entity = FighterEntity::class,
+            parentColumns = ["fighterId"],
+            childColumns = ["fighterId2"],
+            onDelete = ForeignKey.CASCADE
+        ),
+    ], primaryKeys = ["eventId", "judgeId", "fighterId1", "fighterId2"]
 )
 data class FightEntity(
     val eventId: Long,
     val judgeId: Long,
-    val fighterId: Long,
-    val points: Int,
-    val round: Int,
+    val fighterId1: Long,
+    val fighterId2: Long,
+    val points1: Int,
+    val points2: Int,
 )

@@ -104,7 +104,7 @@ fun JudgingScreen(
     onUpdateFighter: (FighterModel) -> Unit,
     onCheckFighters: () -> Unit,
     onComplete: () -> Unit,
-    savePoints: (List<Float>) -> Unit
+    savePoints: (Pair<Float, Float>) -> Unit
 ) {
     var resultFirst by remember { mutableFloatStateOf(0f) }
     var resultSecond by remember { mutableFloatStateOf(0f) }
@@ -156,8 +156,10 @@ fun JudgingScreen(
                         }
                     }
                 }
-                Button(onClick = onCheckFighters) {
-                    Text(string(id = R.string.button_select_fighters))
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Button(onClick = onCheckFighters, modifier = Modifier.align(Alignment.Center)) {
+                        Text(string(id = R.string.button_select_fighters))
+                    }
                 }
             }
         } else {
@@ -232,9 +234,9 @@ fun JudgingScreen(
                         onClick = {
                             savePoints(
                                 if (selectedFighters.size == 2) {
-                                    listOf(resultFirst, resultSecond)
+                                    resultFirst to resultSecond
                                 } else {
-                                    listOf(resultFirst)
+                                    resultFirst to 0f
                                 }
                             )
                         },

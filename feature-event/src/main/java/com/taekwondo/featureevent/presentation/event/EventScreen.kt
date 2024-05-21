@@ -1,5 +1,6 @@
 package com.taekwondo.featureevent.presentation.event
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,13 +21,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.taekwondo.corecommon.ext.observe
+import com.taekwondo.coredata.network.model.ResultFighterModel
 import com.taekwondo.corenavigation.JudgingDirection
 import com.taekwondo.corenavigation.MainDirection
 import com.taekwondo.corenavigation.UpdateEventDirection
@@ -56,6 +55,8 @@ fun EventScreen(
 ) {
     val eventModel by viewModel.eventModel.collectAsState()
     val event = viewModel.event.receiveAsFlow()
+    val isJudgingAvailable by viewModel.isJudgingAvailable.collectAsState()
+    val results by viewModel.resultModel.collectAsState()
     event.observe {
         when (it) {
             is EventViewModel.NavigateUpdateParticipantsState -> {
@@ -76,7 +77,9 @@ fun EventScreen(
         }
     }
     EventScreen(
+        isJudgingAvailable = isJudgingAvailable,
         eventModel = eventModel,
+        results = results,
         onUpdateParticipants = viewModel::onUpdateParticipants,
         onUpdateEvent = viewModel::onUpdateEvent,
         onJudging = { navController.navigate("${JudgingDirection.path}?eventId=$eventId") },
@@ -87,7 +90,9 @@ fun EventScreen(
 
 @Composable
 fun EventScreen(
+    isJudgingAvailable: Boolean,
     eventModel: EventModel?,
+    results: List<ResultFighterModel>,
     onUpdateParticipants: () -> Unit,
     onUpdateEvent: () -> Unit,
     onJudging: () -> Unit,
@@ -116,16 +121,18 @@ fun EventScreen(
             }
             when (eventModel.status) {
                 EventStatus.IN_PROGRESS -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = Dimen.padding_12)
-                    ) {
-                        Button(
-                            onClick = onJudging,
-                            modifier = Modifier.align(Alignment.Center)
+                    if (isJudgingAvailable) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = Dimen.padding_12)
                         ) {
-                            Text(text = string(R.string.button_judging))
+                            Button(
+                                onClick = onJudging,
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                Text(text = string(R.string.button_judging))
+                            }
                         }
                     }
                     Box(
@@ -155,14 +162,89 @@ fun EventScreen(
                             Text(text = string(R.string.button_delete_event))
                         }
                     }
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(Dimen.padding_12),
+                        modifier = Modifier.padding(top = Dimen.padding_8)
+                    ) {
+                        items(results) {
+                            Column(
+                                modifier = Modifier
+                                    .background(
+                                        MaterialTheme.colorScheme.surface,
+                                        shape = RoundedCornerShape(Dimen.radius_8)
+                                    )
+                                    .padding(Dimen.radius_4),
+                            ) {
+                                Text(
+                                    text = string(id = R.string.title_winner),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                                Text(
+                                    text = it.winner,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.padding(top = Dimen.padding_2)
+                                )
+                                Text(
+                                    text = string(id = R.string.title_loser),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(top = Dimen.padding_8)
+                                )
+                                Text(
+                                    text = it.loser,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.Normal,
+                                    modifier = Modifier.padding(top = Dimen.padding_2)
+                                )
+                            }
+                        }
+                    }
                 }
             }
             Row(
-                modifier = Modifier.padding(top = Dimen.padding_20),
+                modifier = Modifier.padding(top = Dimen.padding_4),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    string(R.string.title_judges_size, eventModel.users.size),
+                    string(R.string.title_main_judge),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                IconButton(onClick = onUpdateParticipants) {
+                    Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
+                }
+            }
+            Row(
+                modifier = Modifier.padding(top = Dimen.padding_4),
+                horizontalArrangement = Arrangement.spacedBy(Dimen.padding_12),
+            ) {
+                it.mainJudge?.let { mainJudge ->
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(Dimen.padding_4)
+                    ) {
+                        AsyncImage(
+                            model = mainJudge.photo,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(Dimen.radius_8))
+                                .width(80.dp)
+                                .height(140.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                        Text(
+                            text = mainJudge.name,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier.padding(top = Dimen.padding_4),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    string(R.string.title_judges_size, eventModel.judges.size),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -171,10 +253,10 @@ fun EventScreen(
                 }
             }
             LazyRow(
-                modifier = Modifier.padding(top = Dimen.padding_8),
+                modifier = Modifier.padding(top = Dimen.padding_4),
                 horizontalArrangement = Arrangement.spacedBy(Dimen.padding_12),
             ) {
-                items(it.users) {
+                items(it.judges) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(Dimen.padding_4)
                     ) {
@@ -196,7 +278,7 @@ fun EventScreen(
                 }
             }
             Row(
-                modifier = Modifier.padding(top = Dimen.padding_20),
+                modifier = Modifier.padding(top = Dimen.padding_4),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -209,7 +291,7 @@ fun EventScreen(
                 }
             }
             LazyRow(
-                modifier = Modifier.padding(top = Dimen.padding_8),
+                modifier = Modifier.padding(top = Dimen.padding_4),
                 horizontalArrangement = Arrangement.spacedBy(Dimen.padding_12),
             ) {
                 items(it.fighters) {

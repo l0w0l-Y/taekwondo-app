@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.taekwondo.coredata.network.entity.EventFighterCrossRef
 import com.taekwondo.coredata.network.entity.EventJudgeCrossRef
+import com.taekwondo.coredata.network.entity.EventMainJudgeCrossRef
 import com.taekwondo.coredata.network.entity.EventParticipants
 import com.taekwondo.coredata.network.entity.FighterEntity
 
@@ -34,6 +35,9 @@ interface EventParticipantsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEventFighterCrossRef(crossRef: EventFighterCrossRef)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertEventMainJudgeCrossRef(crossRef: EventMainJudgeCrossRef)
+
     /**
      * Удаляет EventFighterCrossRef (отношение eventId и fighterId) из базы данных.
      * @param eventId Идентификатор события.
@@ -47,6 +51,9 @@ interface EventParticipantsDao {
      */
     @Query("DELETE FROM eventjudgecrossref WHERE eventId = :eventId")
     fun removeEventJudgeCrossRef(eventId: Long)
+
+    @Query("DELETE FROM eventmainjudgecrossref WHERE eventId = :eventId")
+    fun removeEventMainJudgeCrossRef(eventId: Long)
 
     @Query("SELECT * FROM fighter WHERE fighterId IN (SELECT fighterId FROM eventfightercrossref WHERE eventId = :eventId)")
     fun getFightersEvent(eventId: Long): List<FighterEntity>

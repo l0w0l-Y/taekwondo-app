@@ -21,11 +21,15 @@ class UpdateEventFighterViewModel @Inject constructor(
 
     private val uid = checkNotNull(savedStateHandle.get<Long?>("uid"))
 
+    val mainJudges = MutableStateFlow(listOf<JudgeModel>())
     val judges = MutableStateFlow(listOf<JudgeModel>())
     val fighters = MutableStateFlow(listOf<FighterModel>())
 
     sealed class State
     class NavigateMainState(val uid: Long) : State()
+    object ErrorMainJudgesState : State()
+    object ErrorZeroJudgesState : State()
+    object ErrorZeroFightersState : State()
 
     val event = EventChannel<State>()
 
@@ -39,13 +43,23 @@ class UpdateEventFighterViewModel @Inject constructor(
             interactor.getAllFighters().doOnSuccess {
                 fighters.emit(it)
             }
-            interactor.getAllUsers().doOnSuccess {
+            interactor.getAllJudges().doOnSuccess {
                 judges.emit(it)
+                mainJudges.emit(it)
             }
             interactor.getEventModel(uid)
                 .doOnSuccess {
                     it?.let {
-                        it.users.forEach { user ->
+                        it.mainJudge.let { user ->
+                            mainJudges.value = mainJudges.value.map { judge ->
+                                if (judge.uid == user?.uid) {
+                                    judge.copy(isPicked = true)
+                                } else {
+                                    judge
+                                }
+                            }
+                        }
+                        it.judges.forEach { user ->
                             judges.value = judges.value.map { judge ->
                                 if (judge.uid == user.uid) {
                                     judge.copy(isPicked = true)
@@ -83,6 +97,20 @@ class UpdateEventFighterViewModel @Inject constructor(
     }
 
     /**
+     * Обновляет флаг isPicked для главного судьи, если судья участвует или не участвует в событии.
+     */
+    fun updateMainJudge(judge: JudgeModel) {
+        val updatedJudges = mainJudges.value.map { currentJudge ->
+            if (currentJudge.uid == judge.uid) {
+                currentJudge.copy(isPicked = !currentJudge.isPicked)
+            } else {
+                currentJudge
+            }
+        }
+        mainJudges.value = updatedJudges
+    }
+
+    /**
      * Обновляет флаг isPicked для бойца, если боец участвует или не участвует в событии.
      */
     fun updateFighters(fighter: FighterModel) {
@@ -100,12 +128,29 @@ class UpdateEventFighterViewModel @Inject constructor(
      * Обновляет список участников события.
      * Перенаправляет на главный экран.
      */
-    fun updateEventFighter(users: List<JudgeModel>, fighters: List<FighterModel>) {
+    fun updateEventFighter(
+        judges: List<JudgeModel>,
+        fighters: List<FighterModel>,
+        mainJudges: List<JudgeModel>,
+    ) {
         viewModelScope.launch {
+            if (fighters.count { it.isPicked } == 0) {
+                event.send(ErrorZeroFightersState)
+                return@launch
+            }
+            if (judges.count { it.isPicked } == 0) {
+                event.send(ErrorZeroJudgesState)
+                return@launch
+            }
+            if (mainJudges.count { it.isPicked } != 1) {
+                event.send(ErrorMainJudgesState)
+                return@launch
+            }
             interactor.insertEventParticipants(
                 uid,
-                users.filter { it.isPicked }.map { it.uid },
-                fighters.filter { it.isPicked }.map { it.uid }
+                judges.filter { it.isPicked }.map { it.uid },
+                fighters.filter { it.isPicked }.map { it.uid },
+                mainJudges.first { it.isPicked }.uid,
             )
                 .doOnSuccess {
                     event.send(NavigateMainState(uid))

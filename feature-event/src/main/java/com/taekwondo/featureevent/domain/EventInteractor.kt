@@ -4,6 +4,8 @@ import com.taekwondo.coredata.network.Effect
 import com.taekwondo.coredata.network.entity.EventStatus
 import com.taekwondo.coredata.network.map
 import com.taekwondo.coredata.network.model.FightModel
+import com.taekwondo.coredata.network.model.ResultFighterModel
+import com.taekwondo.coredata.network.model.ResultModel
 import com.taekwondo.coredata.network.repository.AuthRepository
 import com.taekwondo.coredata.network.repository.EventRepository
 import com.taekwondo.coredata.network.repository.FighterRepository
@@ -20,19 +22,24 @@ interface EventInteractor {
     suspend fun insertEventParticipants(
         uid: Long,
         users: List<Long>,
-        fighters: List<Long>
+        fighters: List<Long>,
+        mainJudges: Long,
     ): Effect<Unit>
+
     suspend fun getEventModel(uid: Long): Effect<EventModel?>
     suspend fun getAllFighters(): Effect<List<FighterModel>>
-    suspend fun getAllUsers(): Effect<List<JudgeModel>>
+    suspend fun getAllJudges(): Effect<List<JudgeModel>>
     suspend fun savePoints(
-        points: List<FightModel>
+        fight: FightModel
     ): Effect<Unit>
+
     suspend fun getFightersEvent(
         eventId: Long
     ): Effect<List<FighterModel>>
+
     suspend fun deleteEvent(eventId: Long): Effect<Unit>
     suspend fun archiveEvent(eventId: Long): Effect<Unit>
+    suspend fun getResults(eventId: Long): Effect<List<ResultFighterModel>>
 }
 
 class EventInteractorImpl @Inject constructor(
@@ -60,9 +67,10 @@ class EventInteractorImpl @Inject constructor(
     override suspend fun insertEventParticipants(
         uid: Long,
         users: List<Long>,
-        fighters: List<Long>
+        fighters: List<Long>,
+        mainJudges: Long,
     ): Effect<Unit> {
-        return eventRepository.insertEventParticipants(uid, users, fighters)
+        return eventRepository.insertEventParticipants(uid, users, fighters, mainJudges)
     }
 
     override suspend fun getEventModel(uid: Long): Effect<EventModel?> {
@@ -73,8 +81,32 @@ class EventInteractorImpl @Inject constructor(
                     name = eventParticipantsEntity.event.name,
                     date = eventParticipantsEntity.event.date,
                     place = eventParticipantsEntity.event.place,
-                    fighters = eventParticipantsEntity.fighters,
-                    users = eventParticipantsEntity.judges,
+                    fighters = eventParticipantsEntity.fighters.map { fighter ->
+                        FighterModel(
+                            uid = fighter.uid,
+                            name = fighter.name,
+                            photo = fighter.photo,
+                            isPicked = false
+                        )
+                    },
+                    judges = eventParticipantsEntity.judges.map { entity ->
+                        JudgeModel(
+                            uid = entity.uid,
+                            name = entity.name,
+                            username = entity.username,
+                            photo = entity.photo,
+                            isPicked = false
+                        )
+                    },
+                    mainJudge = eventParticipantsEntity.mainFighter?.let { entity ->
+                        JudgeModel(
+                            uid = entity.uid,
+                            name = entity.name,
+                            username = entity.username,
+                            photo = entity.photo,
+                            isPicked = false
+                        )
+                    },
                     status = when (eventParticipantsEntity.event.status) {
                         EventStatus.IN_PROGRESS -> EventStatusModel.IN_PROGRESS
                         EventStatus.FINISHED -> EventStatusModel.FINISHED
@@ -97,7 +129,7 @@ class EventInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllUsers(): Effect<List<JudgeModel>> {
+    override suspend fun getAllJudges(): Effect<List<JudgeModel>> {
         return userRepository.getAllJudges().map { users ->
             users?.map {
                 JudgeModel(
@@ -111,8 +143,8 @@ class EventInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun savePoints(points: List<FightModel>): Effect<Unit> {
-        return eventRepository.savePoints(points)
+    override suspend fun savePoints(fight: FightModel): Effect<Unit> {
+        return eventRepository.savePoints(fight)
     }
 
     override suspend fun getFightersEvent(eventId: Long): Effect<List<FighterModel>> {
@@ -134,5 +166,9 @@ class EventInteractorImpl @Inject constructor(
 
     override suspend fun archiveEvent(eventId: Long): Effect<Unit> {
         return eventRepository.archiveEvent(eventId)
+    }
+
+    override suspend fun getResults(eventId: Long): Effect<List<ResultFighterModel>> {
+        return eventRepository.getResults(eventId)
     }
 }
