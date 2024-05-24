@@ -27,8 +27,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -234,7 +236,8 @@ fun EventScreen(
                         Text(
                             text = mainJudge.name,
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.width(100.dp)
                         )
                     }
                 }
@@ -272,7 +275,8 @@ fun EventScreen(
                         Text(
                             text = it.name,
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.width(100.dp)
                         )
                     }
                 }
@@ -298,19 +302,36 @@ fun EventScreen(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(Dimen.padding_4)
                     ) {
-                        AsyncImage(
-                            model = it.photo,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(Dimen.radius_8))
-                                .width(80.dp)
-                                .height(140.dp),
-                            contentScale = ContentScale.Crop
-                        )
+                        if (it.photo != null) {
+                            AsyncImage(
+                                model = it.photo,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(Dimen.radius_8))
+                                    .width(80.dp)
+                                    .height(140.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .width(80.dp)
+                                    .height(140.dp)
+                                    .clip(RoundedCornerShape(Dimen.radius_8))
+                                    .background(MaterialTheme.colorScheme.surface)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = com.taekwondo.coreui.R.drawable.ic_placeholder),
+                                    contentDescription = null,
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
+                            }
+                        }
                         Text(
                             text = it.name,
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.width(100.dp)
                         )
                     }
                 }

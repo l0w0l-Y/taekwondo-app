@@ -1,5 +1,7 @@
 package com.taekwondo.coredata.network.repository
 
+import android.net.Uri
+import com.taekwondo.corecommon.ext.debug
 import com.taekwondo.coredata.network.Effect
 import com.taekwondo.coredata.network.Error
 import com.taekwondo.coredata.network.Success
@@ -8,6 +10,8 @@ import com.taekwondo.coredata.network.dao.FighterDao
 import com.taekwondo.coredata.network.database.DatabaseError
 import com.taekwondo.coredata.network.di.IoDispatcher
 import com.taekwondo.coredata.network.entity.FighterEntity
+import com.taekwondo.coredata.network.enums.Gender
+import com.taekwondo.coredata.network.excel.ExcelReader
 import com.taekwondo.coredata.network.mapEffect
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
@@ -19,7 +23,10 @@ interface FighterRepository {
         weight: Float,
         height: Float,
         weightCategory: String,
-        photo: String?,
+        gender: Gender,
+        club: String,
+        trainer: String,
+        photo: String?
     ): Effect<Unit>
 
     suspend fun getAllFighters(): Effect<List<FighterEntity>>
@@ -31,15 +38,20 @@ interface FighterRepository {
         weight: Float,
         height: Float,
         weightCategory: String,
-        photo: String?,
+        gender: Gender,
+        club: String,
+        trainer: String,
+        photo: String?
     ): Effect<Unit>
 
     suspend fun deleteFighter(uid: Long): Effect<Unit>
+    suspend fun readExcelFile(filePath: Uri): Effect<Unit>
 }
 
 class FighterRepositoryImpl @Inject constructor(
     @IoDispatcher val dispatcher: CoroutineDispatcher,
     private val fighterDao: FighterDao,
+    private val excelReader: ExcelReader,
 ) : FighterRepository {
     //Создание бойца
     override suspend fun createFighter(
@@ -48,6 +60,9 @@ class FighterRepositoryImpl @Inject constructor(
         weight: Float,
         height: Float,
         weightCategory: String,
+        gender: Gender,
+        club: String,
+        trainer: String,
         photo: String?
     ): Effect<Unit> {
         return callDB(dispatcher) {
@@ -58,7 +73,10 @@ class FighterRepositoryImpl @Inject constructor(
                     weight = weight,
                     height = height,
                     weightCategory = weightCategory,
-                    photo = photo
+                    photo = photo,
+                    club = club,
+                    trainer = trainer,
+                    gender = gender
                 )
             )
         }
@@ -92,7 +110,10 @@ class FighterRepositoryImpl @Inject constructor(
         weight: Float,
         height: Float,
         weightCategory: String,
-        photo: String?,
+        gender: Gender,
+        club: String,
+        trainer: String,
+        photo: String?
     ): Effect<Unit> {
         return callDB(dispatcher) {
             fighterDao.update(
@@ -104,6 +125,9 @@ class FighterRepositoryImpl @Inject constructor(
                     height = height,
                     weightCategory = weightCategory,
                     photo = photo,
+                    club = club,
+                    trainer = trainer,
+                    gender = gender,
                 )
             )
         }
@@ -113,6 +137,14 @@ class FighterRepositoryImpl @Inject constructor(
     override suspend fun deleteFighter(uid: Long): Effect<Unit> {
         return callDB(dispatcher) {
             fighterDao.deleteFighter(uid)
+        }
+    }
+
+    override suspend fun readExcelFile(filePath: Uri): Effect<Unit> {
+        return callDB(dispatcher) {
+            fighterDao.insertAll(
+                excelReader.readExcelFile(filePath)
+            )
         }
     }
 }

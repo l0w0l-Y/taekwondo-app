@@ -3,6 +3,7 @@ package com.taekwondo.coredata.network.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.taekwondo.coredata.network.enums.Gender
 
 /**
  * Сущность, представляющая бойца.
@@ -29,6 +30,12 @@ data class FighterEntity(
     val height: Float,
     @ColumnInfo(name = "weight_category")
     val weightCategory: String,
+    @ColumnInfo(name = "club")
+    val club: String,
+    @ColumnInfo(name = "trainer")
+    val trainer: String,
+    @ColumnInfo(name = "gender")
+    val gender: Gender,
     @ColumnInfo(name = "photo")
-    val photo: String?,
+    val photo: String? = null,
 )

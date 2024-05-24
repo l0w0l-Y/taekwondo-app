@@ -17,6 +17,8 @@ android {
 }
 
 dependencies {
+    implementation project(':core-common')
+
     implementation(core)
     implementation(composeRuntime)
 
@@ -26,7 +28,6 @@ dependencies {
     implementation(loggingInterceptor)
 
     implementation(hiltDep)
-    implementation project(':core-common')
     kapt(hiltKapt)
 
     implementation(serialization)
@@ -34,4 +35,8 @@ dependencies {
 
     implementation(room)
     kapt(roomKapt)
+
+    implementation "org.apache.poi:poi:3.10-FINAL"
+    implementation "org.apache.poi:poi-ooxml:3.10-FINAL"
+    implementation "org.apache.poi:poi-ooxml-schemas:3.10-FINAL"
 }

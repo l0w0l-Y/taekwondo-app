@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -32,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,6 +54,7 @@ import com.taekwondo.featuremain.R
 import com.taekwondo.featuremain.presentation.model.EventModel
 import com.taekwondo.featuremain.presentation.model.FighterModel
 import kotlinx.coroutines.flow.receiveAsFlow
+import com.taekwondo.coreui.R as CoreUiR
 
 @Composable
 fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
@@ -143,19 +148,36 @@ fun MainScreen(
                         modifier = Modifier.clickable {
                             updateFighter(it.uid)
                         }) {
-                        AsyncImage(
-                            model = it.photo,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(Dimen.radius_8))
-                                .width(80.dp)
-                                .height(140.dp),
-                            contentScale = ContentScale.Crop
-                        )
+                        if (it.photo != null) {
+                            AsyncImage(
+                                model = it.photo,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(Dimen.radius_8))
+                                    .width(80.dp)
+                                    .height(140.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .width(80.dp)
+                                    .height(140.dp)
+                                    .clip(RoundedCornerShape(Dimen.radius_8))
+                                    .background(MaterialTheme.colorScheme.surface)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = CoreUiR.drawable.ic_placeholder),
+                                    contentDescription = null,
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
+                            }
+                        }
                         Text(
                             text = it.name,
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.widthIn(max = 100.dp)
                         )
                     }
                 }

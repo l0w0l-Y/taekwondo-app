@@ -3,6 +3,7 @@ package com.taekwondo.featureevent.presentation.judging
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -27,10 +28,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,10 +43,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -138,16 +142,33 @@ fun JudgingScreen(
                             modifier = Modifier.clickable {
                                 onUpdateFighter(it)
                             }) {
-                            AsyncImage(
-                                model = it.photo,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(Dimen.radius_8))
-                                    .width(80.dp)
-                                    .height(140.dp),
-                                contentScale = ContentScale.Crop,
-                                alpha = if (it.isPicked) 1.0f else 0.5f
-                            )
+                            if (it.photo != null) {
+                                AsyncImage(
+                                    model = it.photo,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(Dimen.radius_8))
+                                        .width(80.dp)
+                                        .height(140.dp),
+                                    contentScale = ContentScale.Crop,
+                                    alpha = if (it.isPicked) 1.0f else 0.5f
+                                )
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .width(80.dp)
+                                        .height(140.dp)
+                                        .clip(RoundedCornerShape(Dimen.radius_8))
+                                        .background(MaterialTheme.colorScheme.surface)
+                                        .alpha(if (it.isPicked) 1.0f else 0.5f)
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = com.taekwondo.coreui.R.drawable.ic_placeholder),
+                                        contentDescription = null,
+                                        modifier = Modifier.align(Alignment.Center)
+                                    )
+                                }
+                            }
                             Text(
                                 text = it.name,
                                 style = MaterialTheme.typography.bodyMedium,
@@ -180,19 +201,36 @@ fun JudgingScreen(
                         ) {
                             items(selectedFighters) {
                                 Column {
-                                    AsyncImage(
-                                        model = it.photo,
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(Dimen.radius_8))
-                                            .width(80.dp)
-                                            .height(140.dp),
-                                        contentScale = ContentScale.Crop
-                                    )
+                                    if (it.photo != null) {
+                                        AsyncImage(
+                                            model = it.photo,
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .clip(RoundedCornerShape(Dimen.radius_8))
+                                                .width(80.dp)
+                                                .height(140.dp),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    } else {
+                                        Box(
+                                            modifier = Modifier
+                                                .width(80.dp)
+                                                .height(140.dp)
+                                                .clip(RoundedCornerShape(Dimen.radius_8))
+                                                .background(MaterialTheme.colorScheme.surface)
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = com.taekwondo.coreui.R.drawable.ic_placeholder),
+                                                contentDescription = null,
+                                                modifier = Modifier.align(Alignment.Center)
+                                            )
+                                        }
+                                    }
                                     Text(
                                         text = it.name,
                                         style = MaterialTheme.typography.bodyMedium,
-                                        fontWeight = FontWeight.SemiBold
+                                        fontWeight = FontWeight.SemiBold,
+                                        modifier = Modifier.width(100.dp)
                                     )
                                 }
                             }
@@ -274,39 +312,35 @@ fun ScorePanelScreen(
             modifier = Modifier.padding(top = Dimen.padding_20)
         )
         Row(
-            modifier = modifier.padding(top = Dimen.padding_12)
+            modifier = modifier.padding(top = Dimen.padding_12),
+            horizontalArrangement = Arrangement.spacedBy(Dimen.padding_2)
         ) {
-            ScoreButton(round, 1.0f, onResultChange)
-            ScoreButton(round, 2.0f, onResultChange)
-            ScoreButton(round, 3.0f, onResultChange)
-            ScoreButton(round, 4.0f, onResultChange)
-            ScoreButton(round, 5.0f, onResultChange)
+            ScoreButton(1.0f, Color.Green, onResultChange)
+            ScoreButton(2.0f, Color.Green, onResultChange)
+            ScoreButton(3.0f, Color.Green, onResultChange)
+            ScoreButton(4.0f, Color.Green, onResultChange)
+            ScoreButton(5.0f, Color.Green, onResultChange)
         }
         Text(
             text = string(id = R.string.title_warnings),
             modifier = Modifier.padding(top = Dimen.padding_20)
         )
         Row(
-            modifier = modifier.padding(top = Dimen.padding_12)
+            modifier = modifier.padding(top = Dimen.padding_12),
+            horizontalArrangement = Arrangement.spacedBy(Dimen.padding_2)
         ) {
-            ScoreButton(round, -0.33f, onResultChange)
-            ScoreButton(round, -1.0f, onResultChange)
+            ScoreButton(-0.33f, Color.Red, onResultChange)
+            ScoreButton(-1.0f, Color.Red, onResultChange)
         }
     }
 }
 
 @Composable
-fun ScoreButton(round: Int, point: Float, onUpdatePoints: (Float) -> Unit) {
-    var isChecked by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = round) {
-        isChecked = false
-    }
-    TextButton(
-        onClick = {
-            onUpdatePoints(if (!isChecked) point else -point)
-            isChecked = !isChecked
-        },
-        modifier = Modifier.background(if (isChecked) Color.Green else Color.White),
+fun ScoreButton(point: Float, color: Color, onUpdatePoints: (Float) -> Unit) {
+    OutlinedButton(
+        onClick = { onUpdatePoints(point) },
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = color),
+        border = BorderStroke(1.dp, color)
     ) {
         Text(point.toString(), color = Color.Black)
     }

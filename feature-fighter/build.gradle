@@ -35,4 +35,7 @@ dependencies {
     implementation(material)
     implementation(coil)
     implementation(permissions)
+    implementation "org.apache.poi:poi:3.10-FINAL"
+    implementation "org.apache.poi:poi-ooxml:3.10-FINAL"
+    implementation "org.apache.poi:poi-ooxml-schemas:3.10-FINAL"
 }

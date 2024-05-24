@@ -1,20 +1,27 @@
 package com.taekwondo.featurefighter.presentation
 
+import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.RadioButton
+import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,12 +36,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.taekwondo.corecommon.ext.observe
+import com.taekwondo.coredata.network.enums.Gender
 import com.taekwondo.corenavigation.MainDirection
 import com.taekwondo.coretheme.Dimen
 import com.taekwondo.coreui.compose.ImageScreen
 import com.taekwondo.coreui.compose.string
 import com.taekwondo.featurefighter.R
 import kotlinx.coroutines.flow.receiveAsFlow
+
 
 @Composable
 fun CreateFighterScreen(
@@ -48,6 +57,9 @@ fun CreateFighterScreen(
     var weight by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
     var weightCategory by remember { mutableStateOf("") }
+    var club by remember { mutableStateOf("") }
+    var trainer by remember { mutableStateOf("") }
+    var gender by remember { mutableStateOf(Gender.MALE) }
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
@@ -68,6 +80,9 @@ fun CreateFighterScreen(
                 weight = it.weight
                 height = it.height
                 weightCategory = it.weightCategory
+                gender = it.gender
+                club = it.club
+                trainer = it.trainer
                 imageUri = it.photo?.let { Uri.parse(it) }
             }
 
@@ -89,10 +104,17 @@ fun CreateFighterScreen(
         onWeightCategoryChanged = { weightCategory = it },
         imageUri = imageUri,
         onImageUriChanged = { imageUri = it },
+        club = club,
+        onClubChanged = { club = it },
+        trainer = trainer,
+        onTrainerChanged = { trainer = it },
+        gender = gender,
+        onGenderChanged = { gender = it },
         state = state,
         onSaveClick = viewModel::onSaveClick,
         onUpdateState = { state = it },
-        onDeleteFighter = viewModel::onDeleteFighter
+        onDeleteFighter = viewModel::onDeleteFighter,
+        onUploadClick = viewModel::onUploadClick
     )
 }
 
@@ -109,13 +131,32 @@ fun CreateFighterScreen(
     onHeightChanged: (String) -> Unit,
     weightCategory: String,
     onWeightCategoryChanged: (String) -> Unit,
+    club: String,
+    onClubChanged: (String) -> Unit,
+    trainer: String,
+    onTrainerChanged: (String) -> Unit,
+    gender: Gender,
+    onGenderChanged: (Gender) -> Unit,
     imageUri: Uri?,
     onImageUriChanged: (Uri?) -> Unit = {},
     state: CreateFighterViewModel.ScreenType,
-    onSaveClick: (String, Float?, Float?, Float?, String, String?) -> Unit,
+    onSaveClick: (String, Float?, Float?, Float?, String, String?, Gender, String, String) -> Unit,
     onUpdateState: (CreateFighterViewModel.ScreenType) -> Unit,
     onDeleteFighter: () -> Unit,
+    onUploadClick: (Uri) -> Unit,
 ) {
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri: Uri? ->
+        uri?.let {
+            context.contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+            onUploadClick(uri)
+        }
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -123,6 +164,25 @@ fun CreateFighterScreen(
             .fillMaxSize()
             .padding(vertical = Dimen.padding_8)
     ) {
+        if (state == CreateFighterViewModel.Create) {
+            Box(Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = {
+                        launcher.launch(
+                            arrayOf(
+                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                "application/vnd.ms-excel"
+                            )
+                        )
+                    },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = Dimen.padding_16)
+                ) {
+                    Text(text = string(id = R.string.button_upload))
+                }
+            }
+        }
         ImageScreen(
             imageUri,
             onImageUpdate = onImageUriChanged,
@@ -147,6 +207,38 @@ fun CreateFighterScreen(
                     imeAction = ImeAction.Next
                 ),
             )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Dimen.padding_8)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(Dimen.padding_4),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = string(id = R.string.title_gender_male))
+                    RadioButton(
+                        selected = gender == Gender.MALE,
+                        onClick = { onGenderChanged(Gender.MALE) },
+                        enabled = state !is CreateFighterViewModel.Read,
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = MaterialTheme.colorScheme.primary
+                        )
+                    )
+                }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(Dimen.padding_4),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = string(id = R.string.title_gender_female))
+                    RadioButton(
+                        selected = gender == Gender.FEMALE,
+                        onClick = { onGenderChanged(Gender.FEMALE) },
+                        enabled = state !is CreateFighterViewModel.Read,
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = MaterialTheme.colorScheme.primary
+                        )
+                    )
+                }
+            }
             OutlinedTextField(
                 value = years,
                 onValueChange = onYearsChanged,
@@ -196,6 +288,32 @@ fun CreateFighterScreen(
                 shape = RoundedCornerShape(Dimen.padding_16),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+            )
+            OutlinedTextField(
+                value = club,
+                onValueChange = onClubChanged,
+                label = { Text(string(id = R.string.text_field_club)) },
+                modifier = Modifier.padding(top = Dimen.padding_12),
+                enabled = state !is CreateFighterViewModel.Read,
+                singleLine = true,
+                shape = RoundedCornerShape(Dimen.padding_16),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+            )
+            OutlinedTextField(
+                value = trainer,
+                onValueChange = onTrainerChanged,
+                label = { Text(string(id = R.string.text_field_trainer)) },
+                modifier = Modifier.padding(top = Dimen.padding_12),
+                enabled = state !is CreateFighterViewModel.Read,
+                singleLine = true,
+                shape = RoundedCornerShape(Dimen.padding_16),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
                 ),
             )
@@ -212,6 +330,9 @@ fun CreateFighterScreen(
                                 height.toFloatOrNull(),
                                 weightCategory,
                                 imageUri?.toString(),
+                                gender,
+                                club,
+                                trainer
                             )
                         },
                         modifier = Modifier.padding(top = Dimen.padding_16)
@@ -252,6 +373,9 @@ fun CreateFighterScreen(
                                 height.toFloatOrNull(),
                                 weightCategory,
                                 imageUri?.toString(),
+                                gender,
+                                club,
+                                trainer
                             )
                         },
                         modifier = Modifier.padding(top = Dimen.padding_16)

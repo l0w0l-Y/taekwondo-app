@@ -5,10 +5,15 @@
     <string name="text_field_weight">Вес</string>
     <string name="text_field_height">Рост</string>
     <string name="text_field_weight_category">Весовая категория</string>
+    <string name="text_field_club">Клуб</string>
+    <string name="text_field_trainer">Тренер</string>
     <string name="button_create">Создать</string>
     <string name="button_reset">Сбросить</string>
     <string name="button_delete">Удалить</string>
     <string name="button_save">Сохранить</string>
     <string name="button_update">Изменить</string>
     <string name="error_field_required">Необходимо заполнить все поля</string>
+    <string name="title_gender_male">Мужской</string>
+    <string name="title_gender_female">Женский</string>
+    <string name="button_upload">Загрузить файл</string>
 </resources>

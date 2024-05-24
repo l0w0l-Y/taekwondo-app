@@ -27,7 +27,7 @@ import com.taekwondo.coredata.network.entity.ResultEntity
         EventMainJudgeCrossRef::class,
         FightEntity::class,
     ],
-    version = 24,
+    version = 25,
     exportSchema = false
 )
 abstract class Database : RoomDatabase() {

@@ -1,6 +1,7 @@
 package com.taekwondo.featureevent.presentation.fighters
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,9 +25,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -109,29 +113,48 @@ fun UpdateEventFighterScreen(
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
                 .padding(top = Dimen.padding_12),
             horizontalArrangement = Arrangement.spacedBy(Dimen.padding_12),
         ) {
             items(fighters) {
-                Column(verticalArrangement = Arrangement.spacedBy(Dimen.padding_4),
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(Dimen.padding_4),
                     modifier = Modifier.clickable {
                         onUpdateFighter(it)
-                    }) {
-                    AsyncImage(
-                        model = it.photo,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(Dimen.radius_8))
-                            .width(80.dp)
-                            .height(140.dp),
-                        contentScale = ContentScale.Crop,
-                        alpha = if (it.isPicked) 1.0f else 0.5f
-                    )
+                    }
+                ) {
+                    if (it.photo != null) {
+                        AsyncImage(
+                            model = it.photo,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(Dimen.radius_8))
+                                .width(80.dp)
+                                .height(140.dp),
+                            contentScale = ContentScale.Crop,
+                            alpha = if (it.isPicked) 1.0f else 0.5f
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .width(80.dp)
+                                .height(140.dp)
+                                .clip(RoundedCornerShape(Dimen.radius_8))
+                                .background(MaterialTheme.colorScheme.surface)
+                                .alpha(if (it.isPicked) 1.0f else 0.5f)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = com.taekwondo.coreui.R.drawable.ic_placeholder),
+                                contentDescription = null,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+                    }
                     Text(
                         text = it.name,
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.width(100.dp)
                     )
                 }
             }
@@ -144,7 +167,6 @@ fun UpdateEventFighterScreen(
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
                 .padding(top = Dimen.padding_12),
             horizontalArrangement = Arrangement.spacedBy(Dimen.padding_12),
         ) {
@@ -166,7 +188,8 @@ fun UpdateEventFighterScreen(
                     Text(
                         text = it.name,
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.width(100.dp)
                     )
                 }
             }
@@ -179,7 +202,6 @@ fun UpdateEventFighterScreen(
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
                 .padding(top = Dimen.padding_12),
             horizontalArrangement = Arrangement.spacedBy(Dimen.padding_12),
         ) {
@@ -201,7 +223,8 @@ fun UpdateEventFighterScreen(
                     Text(
                         text = it.name,
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.width(100.dp)
                     )
                 }
             }

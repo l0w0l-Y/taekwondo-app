@@ -17,6 +17,13 @@ interface FighterDao {
     fun insert(entity: FighterEntity)
 
     /**
+     * Вставляет список FighterEntity в базу данных.
+     * @param entities Список FighterEntity, который нужно вставить.
+     */
+    @Insert
+    fun insertAll(entities: List<FighterEntity>)
+
+    /**
      * Обновляет FighterEntity в базе данных.
      * @param entity FighterEntity, который нужно обновить.
      */

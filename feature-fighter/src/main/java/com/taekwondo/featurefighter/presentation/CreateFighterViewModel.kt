@@ -1,10 +1,12 @@
 package com.taekwondo.featurefighter.presentation
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.taekwondo.corecommon.ext.EventChannel
 import com.taekwondo.coredata.network.doOnSuccess
+import com.taekwondo.coredata.network.enums.Gender
 import com.taekwondo.featurefighter.domain.FighterInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -33,6 +35,9 @@ class CreateFighterViewModel @Inject constructor(
         val weight: String,
         val height: String,
         val weightCategory: String,
+        val club: String,
+        val trainer: String,
+        val gender: Gender,
         val photo: String?,
     ) : State()
 
@@ -54,6 +59,9 @@ class CreateFighterViewModel @Inject constructor(
                                 weight = it.weight.toString(),
                                 height = it.height.toString(),
                                 weightCategory = it.weightCategory,
+                                club = it.club,
+                                trainer = it.trainer,
+                                gender = it.gender,
                                 photo = it.photo
                             )
                         )
@@ -80,18 +88,42 @@ class CreateFighterViewModel @Inject constructor(
         height: Float?,
         weightCategory: String,
         photo: String?,
+        gender: Gender,
+        club: String,
+        trainer: String,
     ) {
         viewModelScope.launch {
-            if (name.isEmpty() || age == null || weight == null || height == null || weightCategory.isEmpty() || photo == null) {
+            if (name.isEmpty() || age == null || weight == null || height == null || weightCategory.isEmpty() || club.isEmpty() || trainer.isEmpty()) {
                 event.send(ErrorState)
             } else {
                 if (uid != null) {
-                    interactor.updateFighter(uid, name, age, weight, height, weightCategory, photo)
+                    interactor.updateFighter(
+                        uid,
+                        name,
+                        age,
+                        weight,
+                        height,
+                        weightCategory,
+                        gender,
+                        club,
+                        trainer,
+                        photo
+                    )
                         .doOnSuccess {
                             event.send(NavigateMainState)
                         }
                 } else {
-                    interactor.createFighter(name, age, weight, height, weightCategory, photo)
+                    interactor.createFighter(
+                        name,
+                        age,
+                        weight,
+                        height,
+                        weightCategory,
+                        gender,
+                        club,
+                        trainer,
+                        photo
+                    )
                         .doOnSuccess {
                             event.send(NavigateMainState)
                         }
@@ -111,6 +143,14 @@ class CreateFighterViewModel @Inject constructor(
                     .doOnSuccess {
                         event.send(NavigateMainState)
                     }
+            }
+        }
+    }
+
+    fun onUploadClick(uri: Uri) {
+        viewModelScope.launch {
+            interactor.readExcelFile(uri).doOnSuccess {
+                event.send(NavigateMainState)
             }
         }
     }

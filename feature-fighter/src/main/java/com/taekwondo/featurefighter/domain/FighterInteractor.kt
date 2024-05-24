@@ -1,7 +1,9 @@
 package com.taekwondo.featurefighter.domain
 
+import android.net.Uri
 import com.taekwondo.coredata.network.Effect
 import com.taekwondo.coredata.network.entity.FighterEntity
+import com.taekwondo.coredata.network.enums.Gender
 import com.taekwondo.coredata.network.repository.FighterRepository
 import javax.inject.Inject
 
@@ -12,7 +14,10 @@ interface FighterInteractor {
         weight: Float,
         height: Float,
         weightCategory: String,
-        photo: String?,
+        gender: Gender,
+        club: String,
+        trainer: String,
+        photo: String?
     ): Effect<Unit>
 
     suspend fun getAllFighters(): Effect<List<FighterEntity>>
@@ -24,10 +29,14 @@ interface FighterInteractor {
         weight: Float,
         height: Float,
         weightCategory: String,
-        photo: String?,
+        gender: Gender,
+        club: String,
+        trainer: String,
+        photo: String?
     ): Effect<Unit>
 
     suspend fun deleteFighter(uid: Long): Effect<Unit>
+    suspend fun readExcelFile(filePath: Uri): Effect<Unit>
 }
 
 class FighterInteractorImpl @Inject constructor(
@@ -39,9 +48,22 @@ class FighterInteractorImpl @Inject constructor(
         weight: Float,
         height: Float,
         weightCategory: String,
-        photo: String?,
+        gender: Gender,
+        club: String,
+        trainer: String,
+        photo: String?
     ): Effect<Unit> {
-        return fighterRepository.createFighter(name, age, weight, height, weightCategory, photo)
+        return fighterRepository.createFighter(
+            name,
+            age,
+            weight,
+            height,
+            weightCategory,
+            gender,
+            club,
+            trainer,
+            photo
+        )
     }
 
     override suspend fun getAllFighters(): Effect<List<FighterEntity>> {
@@ -59,7 +81,10 @@ class FighterInteractorImpl @Inject constructor(
         weight: Float,
         height: Float,
         weightCategory: String,
-        photo: String?,
+        gender: Gender,
+        club: String,
+        trainer: String,
+        photo: String?
     ): Effect<Unit> {
         return fighterRepository.updateFighter(
             uid,
@@ -68,11 +93,18 @@ class FighterInteractorImpl @Inject constructor(
             weight,
             height,
             weightCategory,
+            gender,
+            club,
+            trainer,
             photo
         )
     }
 
     override suspend fun deleteFighter(uid: Long): Effect<Unit> {
         return fighterRepository.deleteFighter(uid)
+    }
+
+    override suspend fun readExcelFile(filePath: Uri): Effect<Unit> {
+        return fighterRepository.readExcelFile(filePath)
     }
 }
