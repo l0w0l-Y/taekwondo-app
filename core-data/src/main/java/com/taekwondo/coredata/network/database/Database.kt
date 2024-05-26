@@ -15,6 +15,7 @@ import com.taekwondo.coredata.network.entity.FightEntity
 import com.taekwondo.coredata.network.entity.FighterEntity
 import com.taekwondo.coredata.network.entity.JudgeEntity
 import com.taekwondo.coredata.network.entity.ResultEntity
+import com.taekwondo.coredata.network.entity.TournamentEntity
 
 @Database(
     entities = [
@@ -26,8 +27,9 @@ import com.taekwondo.coredata.network.entity.ResultEntity
         EventFighterCrossRef::class,
         EventMainJudgeCrossRef::class,
         FightEntity::class,
+        TournamentEntity::class,
     ],
-    version = 25,
+    version = 27,
     exportSchema = false
 )
 abstract class Database : RoomDatabase() {

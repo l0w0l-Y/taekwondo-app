@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.taekwondo.corecommon.ext.EventChannel
 import com.taekwondo.coredata.network.doOnSuccess
+import com.taekwondo.coredata.network.model.FighterModel
 import com.taekwondo.featureevent.domain.EventInteractor
-import com.taekwondo.featureevent.presentation.model.FighterModel
 import com.taekwondo.featureevent.presentation.model.JudgeModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +30,7 @@ class UpdateEventFighterViewModel @Inject constructor(
     object ErrorMainJudgesState : State()
     object ErrorZeroJudgesState : State()
     object ErrorZeroFightersState : State()
+    object ErrorCountFightersState : State()
 
     val event = EventChannel<State>()
 
@@ -136,6 +137,12 @@ class UpdateEventFighterViewModel @Inject constructor(
         viewModelScope.launch {
             if (fighters.count { it.isPicked } == 0) {
                 event.send(ErrorZeroFightersState)
+                return@launch
+            }
+            if (fighters.count { it.isPicked } != 2 && fighters.count { it.isPicked } != 4 &&
+                fighters.count { it.isPicked } != 8 && fighters.count { it.isPicked } != 16 &&
+                fighters.count { it.isPicked } != 32) {
+                event.send(ErrorCountFightersState)
                 return@launch
             }
             if (judges.count { it.isPicked } == 0) {

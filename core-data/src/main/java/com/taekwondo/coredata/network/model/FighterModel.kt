@@ -1,4 +1,4 @@
-package com.taekwondo.featureevent.presentation.model
+package com.taekwondo.coredata.network.model
 
 data class FighterModel(
     val uid: Long,

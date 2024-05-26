@@ -9,6 +9,7 @@ import androidx.room.Update
 import com.taekwondo.coredata.network.entity.EventEntity
 import com.taekwondo.coredata.network.entity.FightEntity
 import com.taekwondo.coredata.network.entity.ResultEntity
+import com.taekwondo.coredata.network.entity.TournamentEntity
 
 @Dao
 interface EventDao {
@@ -50,8 +51,15 @@ interface EventDao {
     @Query("SELECT * FROM fight WHERE fighterId1 = :fightId1 AND fighterId2 = :fightId2 AND judgeId = :judgeId AND eventId = :eventId")
     fun getFight(eventId: Long, judgeId: Long, fightId1: Long, fightId2: Long): FightEntity?
 
+    @Query("SELECT * FROM fight WHERE tournamentId = :fightId")
+    fun getFightsByFightId(fightId: Long): List<FightEntity>
+
+    @Query("SELECT * FROM fight WHERE tournamentId = :uid")
+    fun getFightsByTournamentId(uid: Long): List<FightEntity>
+
     @Transaction
     fun upsertFight(
+        tournamentId: Long,
         judgeId: Long,
         eventId: Long,
         fighterId1: Long,
@@ -63,6 +71,7 @@ interface EventDao {
         if (fight != null) {
             insertFightEntity(
                 FightEntity(
+                    tournamentId,
                     eventId,
                     judgeId,
                     fighterId1,
@@ -74,6 +83,7 @@ interface EventDao {
         } else {
             insertFightEntity(
                 FightEntity(
+                    tournamentId,
                     eventId,
                     judgeId,
                     fighterId1,
@@ -102,4 +112,16 @@ interface EventDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsertResult(resultEntity: ResultEntity)
+
+    @Query("SELECT * FROM tournament WHERE eventId = :eventId")
+    fun getTournamentEvent(eventId: Long): List<TournamentEntity>
+
+    @Query("SELECT * FROM tournament WHERE uid = :tournamentId")
+    fun getTournament(tournamentId: Long): TournamentEntity?
+
+    @Query("SELECT * FROM tournament WHERE eventId = :eventId AND round = :round AND `group` = :group")
+    fun getTournament(eventId: Long, round: Int, group: Int): TournamentEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertTournament(tournament: TournamentEntity)
 }

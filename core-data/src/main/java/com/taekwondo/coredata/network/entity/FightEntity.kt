@@ -29,9 +29,16 @@ import androidx.room.ForeignKey
             childColumns = ["fighterId2"],
             onDelete = ForeignKey.CASCADE
         ),
-    ], primaryKeys = ["eventId", "judgeId", "fighterId1", "fighterId2"]
+        ForeignKey(
+            entity = TournamentEntity::class,
+            parentColumns = ["uid"],
+            childColumns = ["tournamentId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ], primaryKeys = ["tournamentId", "eventId", "judgeId", "fighterId1", "fighterId2"]
 )
 data class FightEntity(
+    val tournamentId: Long,
     val eventId: Long,
     val judgeId: Long,
     val fighterId1: Long,

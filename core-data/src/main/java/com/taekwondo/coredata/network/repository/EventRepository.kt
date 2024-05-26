@@ -13,10 +13,11 @@ import com.taekwondo.coredata.network.entity.EventMainJudgeCrossRef
 import com.taekwondo.coredata.network.entity.EventParticipants
 import com.taekwondo.coredata.network.entity.EventStatus
 import com.taekwondo.coredata.network.entity.FighterEntity
-import com.taekwondo.coredata.network.entity.ResultEntity
+import com.taekwondo.coredata.network.entity.TournamentEntity
 import com.taekwondo.coredata.network.model.FightModel
+import com.taekwondo.coredata.network.model.FighterModel
 import com.taekwondo.coredata.network.model.ResultFighterModel
-import com.taekwondo.coredata.network.model.ResultModel
+import com.taekwondo.coredata.network.model.TournamentModel
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
@@ -46,6 +47,10 @@ interface EventRepository {
     suspend fun deleteEvent(eventId: Long): Effect<Unit>
     suspend fun archiveEvent(eventId: Long): Effect<Unit>
     suspend fun getResults(eventId: Long): Effect<List<ResultFighterModel>>
+    suspend fun getTournamentEvent(eventId: Long): Effect<List<TournamentModel>>
+    suspend fun getTournament(tournamentId: Long): Effect<TournamentModel?>
+    suspend fun setTournament(fighters: List<Long>, eventId: Long): Effect<Unit>
+    suspend fun getWinner(eventId: Long, matchId: Long): Effect<Unit>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -143,6 +148,7 @@ class EventRepositoryImpl @Inject constructor(
     override suspend fun savePoints(fight: FightModel): Effect<Unit> {
         return callDB(ioDispatcher) {
             eventDao.upsertFight(
+                fight.tournamentId,
                 fight.judgeId,
                 fight.eventId,
                 fight.fighterId1,
@@ -166,69 +172,9 @@ class EventRepositoryImpl @Inject constructor(
     }
 
     override suspend fun archiveEvent(eventId: Long): Effect<Unit> {
-        val results = mutableListOf<ResultModel>()
-        val map = mutableMapOf<Pair<Long, Long>, MutableList<Pair<Long, Long>>>()
         return callDB(ioDispatcher) {
             eventDao.getEvent(eventId)?.let {
                 eventDao.update(it.copy(status = EventStatus.FINISHED))
-            }
-            val _fights = eventDao.getFightsByEventId(eventId)
-            _fights.forEach {
-                if (it.fighterId1 < it.fighterId2) {
-                    map[Pair(it.fighterId1, it.fighterId2)] =
-                        (map[Pair(it.fighterId1, it.fighterId2)]
-                            ?: mutableListOf()).apply {
-                            add(
-                                Pair(
-                                    it.points1.toLong(),
-                                    it.points2.toLong()
-                                )
-                            )
-                        }
-                } else if (it.fighterId1 > it.fighterId2) {
-                    map[Pair(it.fighterId2, it.fighterId1)] =
-                        (map[Pair(it.fighterId2, it.fighterId1)]
-                            ?: mutableListOf()).apply {
-                            add(
-                                Pair(
-                                    it.points2.toLong(),
-                                    it.points1.toLong()
-                                )
-                            )
-                        }
-                }
-            }
-            for (key in map.keys) {
-                results.add(
-                    if (map[key]!!.count { it.first > it.second } > map[key]!!.size / 2) {
-                        ResultModel(
-                            winner = key.first,
-                            loser = key.second,
-                            isDraw = false,
-                        )
-                    } else if (map[key]!!.count { it.first < it.second } > map[key]!!.size / 2) {
-                        ResultModel(
-                            winner = key.second,
-                            loser = key.first,
-                            isDraw = false,
-                        )
-                    } else {
-                        ResultModel(
-                            winner = key.first,
-                            loser = key.second,
-                            isDraw = true,
-                        )
-                    }
-                )
-            }
-            for (result in results) {
-                eventDao.insertResult(
-                    ResultEntity(
-                        eventId = eventId,
-                        winner = result.winner,
-                        loser = result.loser,
-                    )
-                )
             }
         }
     }
@@ -240,6 +186,165 @@ class EventRepositoryImpl @Inject constructor(
                     winner = fighterDao.getFighter(it.winner)?.name ?: "",
                     loser = fighterDao.getFighter(it.loser)?.name ?: "",
                 )
+            }
+        }
+    }
+
+    override suspend fun getTournamentEvent(eventId: Long): Effect<List<TournamentModel>> {
+        return callDB(ioDispatcher) {
+            eventDao.getTournamentEvent(eventId).map {
+                TournamentModel(
+                    id = it.uid,
+                    eventId = it.eventId,
+                    fighter1 = it.fighterId1?.let { it1 ->
+                        fighterDao.getFighter(it1)?.let { fighter ->
+                            FighterModel(
+                                uid = fighter.uid,
+                                name = fighter.name,
+                                photo = fighter.photo,
+                                isPicked = false
+                            )
+                        }
+                    },
+                    fighter2 = it.fighterId2?.let { it1 ->
+                        fighterDao.getFighter(it1)?.let { fighter ->
+                            FighterModel(
+                                uid = fighter.uid,
+                                name = fighter.name,
+                                photo = fighter.photo,
+                                isPicked = false
+                            )
+                        }
+                    },
+                    group = it.group,
+                    round = it.round,
+                    winnerIndex = it.winnerIndex,
+                )
+            }
+        }
+    }
+
+    override suspend fun getTournament(tournamentId: Long): Effect<TournamentModel?> {
+        return callDB(ioDispatcher) {
+            eventDao.getTournament(tournamentId)?.let {
+                TournamentModel(
+                    id = it.uid,
+                    eventId = it.eventId,
+                    fighter1 = it.fighterId1?.let { it1 ->
+                        fighterDao.getFighter(it1)?.let { fighter ->
+                            FighterModel(
+                                uid = fighter.uid,
+                                name = fighter.name,
+                                photo = fighter.photo,
+                                isPicked = false
+                            )
+                        }
+                    },
+                    fighter2 = it.fighterId2?.let { it1 ->
+                        fighterDao.getFighter(it1)?.let { fighter ->
+                            FighterModel(
+                                uid = fighter.uid,
+                                name = fighter.name,
+                                photo = fighter.photo,
+                                isPicked = false
+                            )
+                        }
+                    },
+                    group = it.group,
+                    round = it.round,
+                    winnerIndex = it.winnerIndex,
+                )
+            }
+        }
+    }
+
+    override suspend fun setTournament(fighters: List<Long>, eventId: Long): Effect<Unit> {
+        return callDB(ioDispatcher) {
+            if (eventDao.getTournamentEvent(eventId).isNotEmpty()) {
+                return@callDB
+            }
+            var round = 0
+            var fightersSize = fighters.size
+            while (fightersSize > 1) {
+                fightersSize /= 2
+                round++
+            }
+            val groups = fighters.shuffled().chunked(2)
+            groups.forEachIndexed { index, group ->
+                eventDao.insertTournament(
+                    TournamentEntity(
+                        eventId = eventId,
+                        fighterId1 = group.getOrNull(0),
+                        fighterId2 = group.getOrNull(1),
+                        group = index,
+                        round = round,
+                        winnerIndex = null,
+                    )
+                )
+            }
+        }
+    }
+
+    override suspend fun getWinner(eventId: Long, matchId: Long): Effect<Unit> {
+        return callDB(ioDispatcher) {
+            var first = 0
+            var second = 0
+            eventDao.getFightsByTournamentId(matchId).forEach {
+                if (it.points1 > it.points2) {
+                    first++
+                } else {
+                    second++
+                }
+            }
+            val tournament = eventDao.getTournament(matchId)
+            if (tournament != null) {
+                val nextTournament = eventDao.getTournament(
+                    eventId,
+                    tournament.round - 1,
+                    tournament.group / 2
+                )
+                if (first == second) return@callDB
+                if (first > second) {
+                    eventDao.insertTournament(tournament.copy(winnerIndex = 0))
+                    if (nextTournament != null) {
+                        eventDao.insertTournament(
+                            nextTournament.copy(
+                                fighterId2 = tournament.fighterId1
+                            )
+                        )
+                    } else {
+                        eventDao.insertTournament(
+                            TournamentEntity(
+                                eventId = eventId,
+                                fighterId1 = tournament.fighterId1,
+                                fighterId2 = null,
+                                group = tournament.group / 2,
+                                round = tournament.round - 1,
+                                winnerIndex = null,
+                            )
+                        )
+                    }
+                } else {
+                    eventDao.insertTournament(tournament.copy(winnerIndex = 1))
+                    if (nextTournament != null) {
+                        eventDao.insertTournament(
+                            nextTournament.copy(
+                                fighterId2 = tournament.fighterId2
+                            )
+                        )
+                    } else {
+                        eventDao.insertTournament(
+                            TournamentEntity(
+                                eventId = eventId,
+                                fighterId1 = tournament.fighterId2,
+                                fighterId2 = null,
+                                group = tournament.group / 2,
+                                round = tournament.round - 1,
+                                winnerIndex = null,
+                            )
+                        )
+                    }
+                }
             }
         }
     }

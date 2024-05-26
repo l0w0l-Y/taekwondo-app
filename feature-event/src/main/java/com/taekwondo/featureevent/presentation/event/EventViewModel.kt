@@ -7,7 +7,6 @@ import com.taekwondo.corecommon.ext.EventChannel
 import com.taekwondo.coredata.network.database.DataStoreProvider
 import com.taekwondo.coredata.network.database.UID_KEY
 import com.taekwondo.coredata.network.doOnSuccess
-import com.taekwondo.coredata.network.model.ResultFighterModel
 import com.taekwondo.featureevent.domain.EventInteractor
 import com.taekwondo.featureevent.presentation.model.EventModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,9 +29,6 @@ class EventViewModel @Inject constructor(
     private val _eventModel = MutableStateFlow<EventModel?>(null)
     val eventModel: StateFlow<EventModel?> = _eventModel
 
-    private val _resultModel = MutableStateFlow<List<ResultFighterModel>>(emptyList())
-    val resultModel: StateFlow<List<ResultFighterModel>> = _resultModel
-
     private val uid = checkNotNull(savedStateHandle.get<Long>("uid"))
     private var judgeId = -1L
 
@@ -42,6 +38,7 @@ class EventViewModel @Inject constructor(
     class NavigateUpdateParticipantsState(val uid: Long) : State()
     class NavigateUpdateEventState(val uid: Long) : State()
     class NavigateMainState(val uid: Long) : State()
+    class NavigateTournamentState(val uid: Long) : State()
 
     /**
      * Получает модель события по uid.
@@ -66,9 +63,6 @@ class EventViewModel @Inject constructor(
                                 || it?.mainJudge?.uid == judgeId
                     )
                 }
-            interactor.getResults(uid).doOnSuccess {
-                _resultModel.value = it
-            }
         }
     }
 
@@ -105,6 +99,25 @@ class EventViewModel @Inject constructor(
                 .doOnSuccess {
                     event.send(NavigateMainState(uid))
                 }
+        }
+    }
+
+    fun onStartJudging() {
+        viewModelScope.launch {
+            if (eventModel.value?.fighters != null) {
+                interactor.setTournament(
+                    fighters = eventModel.value!!.fighters.map { it.uid }, uid
+                )
+                    .doOnSuccess {
+                        event.send(NavigateTournamentState(uid))
+                    }
+            }
+        }
+    }
+
+    fun onCheckResults() {
+        viewModelScope.launch {
+            event.send(NavigateTournamentState(uid))
         }
     }
 }

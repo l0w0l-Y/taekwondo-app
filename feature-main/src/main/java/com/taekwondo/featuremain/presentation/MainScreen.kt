@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -114,17 +115,25 @@ fun MainScreen(
                 )
             }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(Dimen.padding_2)) {
-            Button(onClick = createFighter) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(Dimen.padding_2),
+            modifier = Modifier.wrapContentSize()
+        ) {
+            Button(
+                onClick = createFighter,
+                modifier = Modifier.height(60.dp)
+            ) {
                 Text(
                     text = string(id = R.string.button_create_fighter),
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
                 )
             }
-            Button(onClick = createEvent) {
+            Button(onClick = createEvent, modifier = Modifier.height(60.dp)) {
                 Text(
                     text = string(id = R.string.button_create_event),
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
                 )
             }
         }

@@ -1,5 +1,7 @@
 package com.taekwondo.featureevent.presentation.model
 
+import com.taekwondo.coredata.network.model.FighterModel
+
 data class EventModel(
     val uid: Long,
     val name: String,

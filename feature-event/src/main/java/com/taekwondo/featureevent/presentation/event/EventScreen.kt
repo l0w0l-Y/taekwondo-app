@@ -22,12 +22,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -37,9 +37,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.taekwondo.corecommon.ext.observe
-import com.taekwondo.coredata.network.model.ResultFighterModel
-import com.taekwondo.corenavigation.JudgingDirection
 import com.taekwondo.corenavigation.MainDirection
+import com.taekwondo.corenavigation.TournamentDirection
 import com.taekwondo.corenavigation.UpdateEventDirection
 import com.taekwondo.corenavigation.UpdateEventFighterDirection
 import com.taekwondo.coretheme.Dimen
@@ -58,7 +57,6 @@ fun EventScreen(
     val eventModel by viewModel.eventModel.collectAsState()
     val event = viewModel.event.receiveAsFlow()
     val isJudgingAvailable by viewModel.isJudgingAvailable.collectAsState()
-    val results by viewModel.resultModel.collectAsState()
     event.observe {
         when (it) {
             is EventViewModel.NavigateUpdateParticipantsState -> {
@@ -76,17 +74,21 @@ fun EventScreen(
                     }
                 }
             }
+
+            is EventViewModel.NavigateTournamentState -> {
+                navController.navigate("${TournamentDirection.path}?eventId=$eventId")
+            }
         }
     }
     EventScreen(
         isJudgingAvailable = isJudgingAvailable,
         eventModel = eventModel,
-        results = results,
         onUpdateParticipants = viewModel::onUpdateParticipants,
         onUpdateEvent = viewModel::onUpdateEvent,
-        onJudging = { navController.navigate("${JudgingDirection.path}?eventId=$eventId") },
+        onJudging = viewModel::onStartJudging,
         onCompleteEvent = viewModel::onCompleteEvent,
         onDeleteEvent = viewModel::onDeleteEvent,
+        onCheckResults = viewModel::onCheckResults
     )
 }
 
@@ -94,12 +96,12 @@ fun EventScreen(
 fun EventScreen(
     isJudgingAvailable: Boolean,
     eventModel: EventModel?,
-    results: List<ResultFighterModel>,
     onUpdateParticipants: () -> Unit,
     onUpdateEvent: () -> Unit,
     onJudging: () -> Unit,
     onCompleteEvent: () -> Unit,
     onDeleteEvent: () -> Unit,
+    onCheckResults: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -152,53 +154,21 @@ fun EventScreen(
                 }
 
                 EventStatus.FINISHED -> {
-                    Box(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = Dimen.padding_12)
+                            .padding(top = Dimen.padding_12),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        TextButton(
+                            onClick = onCheckResults,
+                        ) {
+                            Text(text = string(R.string.button_check_results))
+                        }
                         Button(
                             onClick = onDeleteEvent,
-                            modifier = Modifier.align(Alignment.Center)
                         ) {
                             Text(text = string(R.string.button_delete_event))
-                        }
-                    }
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(Dimen.padding_12),
-                        modifier = Modifier.padding(top = Dimen.padding_8)
-                    ) {
-                        items(results) {
-                            Column(
-                                modifier = Modifier
-                                    .background(
-                                        MaterialTheme.colorScheme.surface,
-                                        shape = RoundedCornerShape(Dimen.radius_8)
-                                    )
-                                    .padding(Dimen.radius_4),
-                            ) {
-                                Text(
-                                    text = string(id = R.string.title_winner),
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                                Text(
-                                    text = it.winner,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier.padding(top = Dimen.padding_2)
-                                )
-                                Text(
-                                    text = string(id = R.string.title_loser),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    modifier = Modifier.padding(top = Dimen.padding_8)
-                                )
-                                Text(
-                                    text = it.loser,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    fontWeight = FontWeight.Normal,
-                                    modifier = Modifier.padding(top = Dimen.padding_2)
-                                )
-                            }
                         }
                     }
                 }

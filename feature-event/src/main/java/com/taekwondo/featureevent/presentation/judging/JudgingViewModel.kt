@@ -4,12 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.taekwondo.corecommon.ext.EventChannel
+import com.taekwondo.corecommon.ext.debug
 import com.taekwondo.coredata.network.database.DataStoreProvider
 import com.taekwondo.coredata.network.database.UID_KEY
 import com.taekwondo.coredata.network.doOnSuccess
 import com.taekwondo.coredata.network.model.FightModel
+import com.taekwondo.coredata.network.model.FighterModel
 import com.taekwondo.featureevent.domain.EventInteractor
-import com.taekwondo.featureevent.presentation.model.FighterModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -22,15 +23,14 @@ import javax.inject.Inject
 class JudgingViewModel @Inject constructor(
     private val interactor: EventInteractor,
     private val savedStateHandle: SavedStateHandle,
-    private val dataStoreProvider: DataStoreProvider
+    private val dataStoreProvider: DataStoreProvider,
 ) : ViewModel() {
     private val eventId = checkNotNull(savedStateHandle.get<Long>("eventId"))
+    private val tournamentId = checkNotNull(savedStateHandle.get<Long>("fightId"))
     private var judgeId = 0L
-    val fighters = MutableStateFlow(listOf<FighterModel>())
     val round = MutableStateFlow(1)
 
     sealed class State
-    object JudgingState : State()
     object ErrorState : State()
 
     val event = EventChannel<State>()
@@ -42,8 +42,15 @@ class JudgingViewModel @Inject constructor(
             .onEach { judgeId = it ?: 0L }
             .launchIn(viewModelScope)
         viewModelScope.launch {
-            interactor.getFightersEvent(eventId).doOnSuccess {
-                fighters.emit(it)
+            interactor.getTournament(tournamentId).doOnSuccess {
+                if (it?.fighter1 != null && it.fighter2 != null) {
+                    selectedFighters.emit(
+                        listOf(
+                            it.fighter1!!.copy(isPicked = true),
+                            it.fighter2!!.copy(isPicked = true),
+                        )
+                    )
+                }
             }
         }
     }
@@ -54,6 +61,7 @@ class JudgingViewModel @Inject constructor(
         viewModelScope.launch {
             interactor.savePoints(
                 FightModel(
+                    tournamentId,
                     eventId,
                     selectedFighters.value.getOrNull(0)?.uid ?: return@launch,
                     selectedFighters.value.getOrNull(1)?.uid
@@ -64,28 +72,6 @@ class JudgingViewModel @Inject constructor(
                 )
             ).doOnSuccess {
                 round.value++
-            }
-        }
-    }
-
-    fun updateFighters(fighter: FighterModel) {
-        val updatedFighter = fighters.value.map { currentFighter ->
-            if (currentFighter.uid == fighter.uid) {
-                currentFighter.copy(isPicked = !currentFighter.isPicked)
-            } else {
-                currentFighter
-            }
-        }
-        fighters.value = updatedFighter
-    }
-
-    fun onCheckFighters() {
-        viewModelScope.launch {
-            if (fighters.value.count { it.isPicked } > 2 || fighters.value.count { it.isPicked } == 0) {
-                event.send(ErrorState)
-            } else {
-                selectedFighters.value = fighters.value.filter { it.isPicked }
-                event.send(JudgingState)
             }
         }
     }

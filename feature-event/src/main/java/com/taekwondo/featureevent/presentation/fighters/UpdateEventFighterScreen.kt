@@ -36,11 +36,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.taekwondo.corecommon.ext.observe
+import com.taekwondo.coredata.network.model.FighterModel
 import com.taekwondo.corenavigation.MainDirection
 import com.taekwondo.coretheme.Dimen
 import com.taekwondo.coreui.compose.string
 import com.taekwondo.featureevent.R
-import com.taekwondo.featureevent.presentation.model.FighterModel
 import com.taekwondo.featureevent.presentation.model.JudgeModel
 import kotlinx.coroutines.flow.receiveAsFlow
 
@@ -56,6 +56,7 @@ fun UpdateEventFighterScreen(
     val errorMainJudgeMessage = string(id = R.string.error_message_main_judge)
     val errorZeroJudgesMessage = string(id = R.string.error_message_zero_judges)
     val errorZeroFightersMessage = string(id = R.string.error_message_zero_fighters)
+    val errorCountFightersMessage = string(id = R.string.error_count_fighters)
     event.observe {
         when (it) {
             is UpdateEventFighterViewModel.NavigateMainState -> {
@@ -76,6 +77,10 @@ fun UpdateEventFighterScreen(
 
             UpdateEventFighterViewModel.ErrorZeroJudgesState -> {
                 Toast.makeText(context, errorZeroJudgesMessage, Toast.LENGTH_SHORT).show()
+            }
+
+            UpdateEventFighterViewModel.ErrorCountFightersState -> {
+                Toast.makeText(context, errorCountFightersMessage, Toast.LENGTH_SHORT).show()
             }
         }
     }

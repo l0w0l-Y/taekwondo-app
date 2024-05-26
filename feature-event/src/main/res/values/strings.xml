@@ -28,10 +28,17 @@
     <string name="title_warnings">Предупреждения</string>
     <string name="button_complete_event">Завершить соревнование</string>
     <string name="button_delete_event">Удалить соревнование</string>
+    <string name="button_check_results">Посмотреть отчёт</string>
     <string name="error_message_main_judge">Выберите одного главного судью</string>
     <string name="error_message_zero_judges">Выберите хотя бы одного бокового судью</string>
     <string name="error_message_zero_fighters">Выберите хотя бы одного бойца</string>
+    <string name="error_count_fighters">Количество бойцов не подходит для сетки</string>
     <string name="title_winner">Победитель</string>
     <string name="title_draw">Ничья</string>
     <string name="title_loser">Проигравший</string>
+    <string name="tournament_grid">Сетка турнира</string>
+    <string name="title_fighter_not_found">Боец не определен</string>
+    <string name="title_group_fighters">Группа</string>
+    <string name="button_open_judging">Открыть судейство</string>
+    <string name="button_close_fight">Завершить бой</string>
 </resources>

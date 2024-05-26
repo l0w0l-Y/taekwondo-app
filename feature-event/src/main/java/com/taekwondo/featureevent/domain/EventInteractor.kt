@@ -4,13 +4,13 @@ import com.taekwondo.coredata.network.Effect
 import com.taekwondo.coredata.network.entity.EventStatus
 import com.taekwondo.coredata.network.map
 import com.taekwondo.coredata.network.model.FightModel
+import com.taekwondo.coredata.network.model.FighterModel
 import com.taekwondo.coredata.network.model.ResultFighterModel
-import com.taekwondo.coredata.network.model.ResultModel
+import com.taekwondo.coredata.network.model.TournamentModel
 import com.taekwondo.coredata.network.repository.AuthRepository
 import com.taekwondo.coredata.network.repository.EventRepository
 import com.taekwondo.coredata.network.repository.FighterRepository
 import com.taekwondo.featureevent.presentation.model.EventModel
-import com.taekwondo.featureevent.presentation.model.FighterModel
 import com.taekwondo.featureevent.presentation.model.JudgeModel
 import javax.inject.Inject
 import com.taekwondo.featureevent.presentation.model.EventStatus as EventStatusModel
@@ -40,6 +40,10 @@ interface EventInteractor {
     suspend fun deleteEvent(eventId: Long): Effect<Unit>
     suspend fun archiveEvent(eventId: Long): Effect<Unit>
     suspend fun getResults(eventId: Long): Effect<List<ResultFighterModel>>
+    suspend fun getTournamentEvent(eventId: Long): Effect<List<TournamentModel>>
+    suspend fun getTournament(tournamentId: Long): Effect<TournamentModel?>
+    suspend fun setTournament(fighters: List<Long>, eventId: Long): Effect<Unit>
+    suspend fun getWinner(eventId: Long, matchId: Long): Effect<Unit>
 }
 
 class EventInteractorImpl @Inject constructor(
@@ -170,5 +174,21 @@ class EventInteractorImpl @Inject constructor(
 
     override suspend fun getResults(eventId: Long): Effect<List<ResultFighterModel>> {
         return eventRepository.getResults(eventId)
+    }
+
+    override suspend fun getTournamentEvent(eventId: Long): Effect<List<TournamentModel>> {
+        return eventRepository.getTournamentEvent(eventId)
+    }
+
+    override suspend fun getTournament(tournamentId: Long): Effect<TournamentModel?> {
+        return eventRepository.getTournament(tournamentId)
+    }
+
+    override suspend fun setTournament(fighters: List<Long>, eventId: Long): Effect<Unit> {
+        return eventRepository.setTournament(fighters, eventId)
+    }
+
+    override suspend fun getWinner(eventId: Long, matchId: Long): Effect<Unit> {
+        return eventRepository.getWinner(eventId, matchId)
     }
 }

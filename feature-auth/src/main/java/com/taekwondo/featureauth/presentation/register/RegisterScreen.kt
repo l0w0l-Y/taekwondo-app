@@ -220,7 +220,8 @@ fun isEmailValid(email: String): Boolean {
 }
 
 fun isPhoneValid(phone: String): Boolean {
-    return Patterns.PHONE.matcher(phone).matches()
+    val regex = Regex("""^\+?7\s?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$""")
+    return regex.matches(phone)
 }
 
 fun isPasswordValid(password: String): Boolean {
