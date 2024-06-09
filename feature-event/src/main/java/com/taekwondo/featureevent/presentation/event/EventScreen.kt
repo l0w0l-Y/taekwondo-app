@@ -111,31 +111,41 @@ fun EventScreen(
             .verticalScroll(rememberScrollState())
     ) {
         eventModel?.let {
-            Row(
+            Box(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = it.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f)
-                )
-                IconButton(onClick = onUpdateEvent) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center)
+                        .padding(horizontal = 40.dp),
+                    verticalArrangement = Arrangement.spacedBy(Dimen.padding_4)
+                ) {
+                    Text(
+                        text = it.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        text = it.date,
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        text = it.place,
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                IconButton(
+                    onClick = onUpdateEvent,
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                ) {
                     Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
                 }
-            }
-            Column(
-                verticalArrangement = Arrangement.spacedBy(
-                    Dimen.padding_4,
-                    Alignment.CenterVertically
-                ),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = it.date, style = MaterialTheme.typography.titleMedium)
-                Text(text = it.place, style = MaterialTheme.typography.titleMedium)
             }
 
             when (eventModel.status) {
