@@ -35,6 +35,10 @@ interface EventParticipantsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEventFighterCrossRef(crossRef: EventFighterCrossRef)
 
+    /**
+     * Вставляет новый EventMainJudgeCrossRef (отношение eventId и judgeId) в базу данных. Если уже есть, заменяет.
+     * @param entity EventMainJudgeCrossRef, который нужно вставить.
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEventMainJudgeCrossRef(crossRef: EventMainJudgeCrossRef)
 
@@ -52,9 +56,18 @@ interface EventParticipantsDao {
     @Query("DELETE FROM eventjudgecrossref WHERE eventId = :eventId")
     fun removeEventJudgeCrossRef(eventId: Long)
 
+    /**
+     * Удаляет EventMainJudgeCrossRef (отношение eventId и judgeId) из базы данных.
+     * @param eventId Идентификатор события.
+     */
     @Query("DELETE FROM eventmainjudgecrossref WHERE eventId = :eventId")
     fun removeEventMainJudgeCrossRef(eventId: Long)
 
+    /**
+     * Получает всех бойцов, участвующих в событии.
+     * @param eventId Идентификатор события.
+     * @return Список всех бойцов, участвующих в событии.
+     */
     @Query("SELECT * FROM fighter WHERE fighterId IN (SELECT fighterId FROM eventfightercrossref WHERE eventId = :eventId)")
     fun getFightersEvent(eventId: Long): List<FighterEntity>
 }

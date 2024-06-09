@@ -39,6 +39,8 @@ class CreateFighterViewModel @Inject constructor(
         val trainer: String,
         val gender: Gender,
         val photo: String?,
+        val totalFights: Int,
+        val wins: Int,
     ) : State()
 
     val event = EventChannel<State>()
@@ -62,7 +64,9 @@ class CreateFighterViewModel @Inject constructor(
                                 club = it.club,
                                 trainer = it.trainer,
                                 gender = it.gender,
-                                photo = it.photo
+                                photo = it.photo,
+                                totalFights = it.totalFights,
+                                wins = it.wins
                             )
                         )
                     }

@@ -6,7 +6,7 @@ import androidx.room.Query
 import com.taekwondo.coredata.network.entity.JudgeEntity
 
 @Dao
-interface AuthDao {
+interface JudgeDao {
     /**
      * Вставляет новый JudgeEntity в базу данных.
      * @param entity JudgeEntity, который нужно вставить.
@@ -29,4 +29,12 @@ interface AuthDao {
      */
     @Query("SELECT * FROM judge")
     fun getAllJudges(): List<JudgeEntity>
+
+    /**
+     * Получает JudgeEntity по идентификатору.
+     * @param uid Идентификатор JudgeEntity.
+     * @return JudgeEntity с указанным идентификатором или null.
+     */
+    @Query("SELECT * FROM judge WHERE judgeId = :uid")
+    fun getJudge(uid: Long): JudgeEntity?
 }

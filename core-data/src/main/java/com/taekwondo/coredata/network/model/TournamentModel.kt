@@ -8,4 +8,5 @@ data class TournamentModel(
     val round: Int,
     val group: Int,
     val winnerIndex: Long?,
+    val judgeChoices: List<JudgeChoiceModel>,
 )

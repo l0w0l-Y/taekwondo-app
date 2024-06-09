@@ -38,7 +38,9 @@
     <string name="title_loser">Проигравший</string>
     <string name="tournament_grid">Сетка турнира</string>
     <string name="title_fighter_not_found">Боец не определен</string>
-    <string name="title_group_fighters">Группа</string>
+    <string name="title_group_fighters">Группа %s</string>
     <string name="button_open_judging">Открыть судейство</string>
     <string name="button_close_fight">Завершить бой</string>
+    <string name="title_judge_choice">Выбор судей:</string>
+    <string name="title_final">Финал</string>
 </resources>

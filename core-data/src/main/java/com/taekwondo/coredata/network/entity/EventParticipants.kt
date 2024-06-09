@@ -52,6 +52,9 @@ data class EventFighterCrossRef(
     val fighterId: Long
 )
 
+/**
+ * Сущность, представляющая отношение между событием и главным судьей.
+ */
 @Entity(primaryKeys = ["eventId", "judgeId"])
 data class EventMainJudgeCrossRef(
     val eventId: Long,

@@ -26,6 +26,9 @@ data class EventEntity(
     val status: EventStatus = EventStatus.IN_PROGRESS,
 )
 
+/**
+ * Перечисление статусов события.
+ */
 enum class EventStatus {
     IN_PROGRESS,
     FINISHED,

@@ -1,7 +1,6 @@
 package com.taekwondo.coredata.network.repository
 
 import android.net.Uri
-import com.taekwondo.corecommon.ext.debug
 import com.taekwondo.coredata.network.Effect
 import com.taekwondo.coredata.network.Error
 import com.taekwondo.coredata.network.Success
@@ -116,20 +115,22 @@ class FighterRepositoryImpl @Inject constructor(
         photo: String?
     ): Effect<Unit> {
         return callDB(dispatcher) {
-            fighterDao.update(
-                FighterEntity(
-                    uid = uid,
-                    name = name,
-                    age = age,
-                    weight = weight,
-                    height = height,
-                    weightCategory = weightCategory,
-                    photo = photo,
-                    club = club,
-                    trainer = trainer,
-                    gender = gender,
+            val fighter = fighterDao.getFighter(uid)
+            fighter?.let {
+                fighterDao.update(
+                    fighter.copy(
+                        name = name,
+                        age = age,
+                        weight = weight,
+                        height = height,
+                        weightCategory = weightCategory,
+                        photo = photo,
+                        club = club,
+                        trainer = trainer,
+                        gender = gender,
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -140,6 +141,7 @@ class FighterRepositoryImpl @Inject constructor(
         }
     }
 
+    //Чтение файла Excel
     override suspend fun readExcelFile(filePath: Uri): Effect<Unit> {
         return callDB(dispatcher) {
             fighterDao.insertAll(

@@ -1,5 +1,8 @@
 package com.taekwondo.coredata.network.enums
 
-enum class Gender{
+/**
+ * Перечисление полов.
+ */
+enum class Gender {
     FEMALE, MALE
 }

@@ -12,19 +12,25 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AssistantPhoto
+import androidx.compose.material.icons.outlined.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -66,6 +72,8 @@ fun CreateFighterScreen(
     var state by remember {
         mutableStateOf(navigationState)
     }
+    var totalFights by remember { mutableIntStateOf(0) }
+    var wins by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     val error = string(id = R.string.error_field_required)
     event.observe {
@@ -84,6 +92,8 @@ fun CreateFighterScreen(
                 club = it.club
                 trainer = it.trainer
                 imageUri = it.photo?.let { Uri.parse(it) }
+                totalFights = it.totalFights
+                wins = it.wins
             }
 
             CreateFighterViewModel.ErrorState -> {
@@ -111,6 +121,8 @@ fun CreateFighterScreen(
         gender = gender,
         onGenderChanged = { gender = it },
         state = state,
+        totalFights = totalFights,
+        wins = wins,
         onSaveClick = viewModel::onSaveClick,
         onUpdateState = { state = it },
         onDeleteFighter = viewModel::onDeleteFighter,
@@ -140,6 +152,8 @@ fun CreateFighterScreen(
     imageUri: Uri?,
     onImageUriChanged: (Uri?) -> Unit = {},
     state: CreateFighterViewModel.ScreenType,
+    totalFights: Int,
+    wins: Int,
     onSaveClick: (String, Float?, Float?, Float?, String, String?, Gender, String, String) -> Unit,
     onUpdateState: (CreateFighterViewModel.ScreenType) -> Unit,
     onDeleteFighter: () -> Unit,
@@ -189,6 +203,31 @@ fun CreateFighterScreen(
             modifier = Modifier.padding(top = Dimen.padding_8),
             enabled = state !is CreateFighterViewModel.Read
         )
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = Dimen.padding_8),
+            verticalArrangement = Arrangement.spacedBy(Dimen.padding_8),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(Dimen.padding_8)) {
+                Icon(
+                    Icons.Outlined.AssistantPhoto,
+                    contentDescription = null,
+                    modifier = Modifier.size(Dimen.size_24),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Text("Победы: $wins", color = MaterialTheme.colorScheme.primary)
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(Dimen.padding_8)) {
+                Icon(
+                    Icons.Outlined.Badge,
+                    contentDescription = null,
+                    modifier = Modifier.size(Dimen.size_24)
+                )
+                Text("Участия: $totalFights")
+            }
+        }
         Column(
             modifier = Modifier
                 .weight(1f)

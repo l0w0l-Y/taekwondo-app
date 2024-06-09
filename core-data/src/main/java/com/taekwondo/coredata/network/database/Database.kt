@@ -3,7 +3,7 @@ package com.taekwondo.coredata.network.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.taekwondo.coredata.network.dao.AuthDao
+import com.taekwondo.coredata.network.dao.JudgeDao
 import com.taekwondo.coredata.network.dao.EventDao
 import com.taekwondo.coredata.network.dao.EventParticipantsDao
 import com.taekwondo.coredata.network.dao.FighterDao
@@ -29,11 +29,11 @@ import com.taekwondo.coredata.network.entity.TournamentEntity
         FightEntity::class,
         TournamentEntity::class,
     ],
-    version = 27,
+    version = 28,
     exportSchema = false
 )
 abstract class Database : RoomDatabase() {
-    abstract fun authDao(): AuthDao
+    abstract fun authDao(): JudgeDao
     abstract fun fighterDao(): FighterDao
     abstract fun eventDao(): EventDao
     abstract fun eventParticipantsDao(): EventParticipantsDao

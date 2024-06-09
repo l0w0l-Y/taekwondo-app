@@ -2,7 +2,7 @@ package com.taekwondo.coredata.network.di
 
 import android.content.Context
 import androidx.room.Room
-import com.taekwondo.coredata.network.dao.AuthDao
+import com.taekwondo.coredata.network.dao.JudgeDao
 import com.taekwondo.coredata.network.dao.EventDao
 import com.taekwondo.coredata.network.dao.EventParticipantsDao
 import com.taekwondo.coredata.network.dao.FighterDao
@@ -38,7 +38,7 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideAuthDao(database: Database): AuthDao {
+    fun provideAuthDao(database: Database): JudgeDao {
         return database.authDao()
     }
 

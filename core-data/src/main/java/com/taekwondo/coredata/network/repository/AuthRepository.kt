@@ -5,7 +5,7 @@ import com.taekwondo.coredata.network.Effect
 import com.taekwondo.coredata.network.Error
 import com.taekwondo.coredata.network.Success
 import com.taekwondo.coredata.network.callDB
-import com.taekwondo.coredata.network.dao.AuthDao
+import com.taekwondo.coredata.network.dao.JudgeDao
 import com.taekwondo.coredata.network.database.DataStoreProvider
 import com.taekwondo.coredata.network.database.UID_KEY
 import com.taekwondo.coredata.network.di.IoDispatcher
@@ -30,7 +30,7 @@ interface AuthRepository {
 }
 
 class AuthRepositoryImpl @Inject constructor(
-    private val dao: AuthDao,
+    private val dao: JudgeDao,
     @IoDispatcher val dispatcher: CoroutineDispatcher,
     private val dataStoreProvider: DataStoreProvider,
 ) : AuthRepository {

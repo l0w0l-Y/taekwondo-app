@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -110,19 +111,33 @@ fun EventScreen(
             .verticalScroll(rememberScrollState())
     ) {
         eventModel?.let {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = it.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = it.name, style = MaterialTheme.typography.titleMedium)
-                    Text(text = it.date, style = MaterialTheme.typography.titleMedium)
-                    Text(text = it.place, style = MaterialTheme.typography.titleMedium)
-                }
+                )
                 IconButton(onClick = onUpdateEvent) {
                     Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
                 }
             }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(
+                    Dimen.padding_4,
+                    Alignment.CenterVertically
+                ),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = it.date, style = MaterialTheme.typography.titleMedium)
+                Text(text = it.place, style = MaterialTheme.typography.titleMedium)
+            }
+
             when (eventModel.status) {
                 EventStatus.IN_PROGRESS -> {
                     if (isJudgingAvailable) {

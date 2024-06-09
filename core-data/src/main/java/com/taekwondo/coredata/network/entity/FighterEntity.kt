@@ -38,4 +38,8 @@ data class FighterEntity(
     val gender: Gender,
     @ColumnInfo(name = "photo")
     val photo: String? = null,
+    @ColumnInfo(name = "total_fights")
+    val totalFights: Int = 0,
+    @ColumnInfo(name = "wins")
+    val wins: Int = 0,
 )

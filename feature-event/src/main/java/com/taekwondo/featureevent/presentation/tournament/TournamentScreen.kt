@@ -95,14 +95,14 @@ fun TournamentItem(
     onJudge: (Long) -> Unit,
     onComplete: (Long) -> Unit,
 ) {
-    val roundNumber by remember { mutableIntStateOf(Math.pow(2.0, round.toDouble()).toInt()) }
+    val roundNumber by remember { mutableIntStateOf(Math.pow(2.0, (round - 1).toDouble()).toInt()) }
     Column() {
         Row(
             modifier = Modifier.padding(Dimen.padding_8),
             horizontalArrangement = Arrangement.spacedBy(Dimen.padding_12)
         ) {
             Text(
-                "1/$roundNumber",
+                if (roundNumber > 1) "1/$roundNumber" else string(id = R.string.title_final),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.weight(1f)
@@ -166,6 +166,24 @@ fun TournamentItem(
                             }
                             TextButton(onClick = { onComplete(it.id) }) {
                                 Text(string(R.string.button_close_fight))
+                            }
+                        }
+                    }
+                    if (it.fighter1 != null && it.fighter2 != null && it.winnerIndex != null) {
+                        Column(modifier = Modifier.padding(top = Dimen.padding_8)) {
+                            Text(
+                                string(id = R.string.title_judge_choice),
+                                color = Color.Gray,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            it.judgeChoices.forEach { judge ->
+                                Text(
+                                    text = judge.name + " - " + if (judge.choiceId == 0L) it.fighter1?.name
+                                        ?: "" else it.fighter2?.name ?: "",
+                                    modifier = Modifier.padding(top = Dimen.padding_8),
+                                    color = Color.Gray,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
                         }
                     }

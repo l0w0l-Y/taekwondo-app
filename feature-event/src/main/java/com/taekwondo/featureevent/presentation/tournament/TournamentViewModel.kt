@@ -60,6 +60,7 @@ class TournamentViewModel @Inject constructor(
     private fun getTournament() {
         viewModelScope.launch {
             eventInteractor.getTournamentEvent(eventId).doOnSuccess {
+                debug(it.toString())
                 _tournament.emit(it)
                 val _round = it.maxBy { it.round }.round
                 round.emit(_round)
