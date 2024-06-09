@@ -29,7 +29,7 @@ import com.taekwondo.coredata.network.entity.TournamentEntity
         FightEntity::class,
         TournamentEntity::class,
     ],
-    version = 28,
+    version = 29,
     exportSchema = false
 )
 abstract class Database : RoomDatabase() {

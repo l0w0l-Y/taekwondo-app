@@ -1,5 +1,6 @@
 package com.taekwondo.featureevent.presentation.model
 
+import com.taekwondo.coredata.network.entity.EventLevel
 import com.taekwondo.coredata.network.model.FighterModel
 
 data class EventModel(
@@ -7,6 +8,8 @@ data class EventModel(
     val name: String,
     val date: String,
     val place: String,
+    val city: String,
+    val level: EventLevel,
     val status: EventStatus,
     var fighters: List<FighterModel>,
     var judges: List<JudgeModel>,

@@ -5,6 +5,8 @@
     <string name="text_field_event_name">Название соревнования</string>
     <string name="text_field_event_date">Дата проведения</string>
     <string name="text_field_event_place">Место проведения</string>
+    <string name="text_field_city">Город</string>
+    <string name="text_field_event_level">Уровень соревнования</string>
     <string name="title_create_event">Создание соревнования</string>
     <string name="button_select_date">Выбрать дату</string>
     <string name="button_select_date_cancel">Отменить</string>

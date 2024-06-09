@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.taekwondo.corecommon.ext.EventChannel
 import com.taekwondo.coredata.network.doOnSuccess
+import com.taekwondo.coredata.network.entity.EventLevel
 import com.taekwondo.featureevent.domain.EventInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -32,6 +33,8 @@ class CreateEventViewModel @Inject constructor(
         val name: String,
         val date: String,
         val place: String,
+        val city: String,
+        val level: EventLevel,
     ) : State()
 
     /**
@@ -48,7 +51,9 @@ class CreateEventViewModel @Inject constructor(
                                     uid = it.uid,
                                     name = it.name,
                                     date = it.date,
-                                    place = it.place
+                                    place = it.place,
+                                    city = it.city,
+                                    level = it.level
                                 )
                             )
                         }
@@ -65,18 +70,18 @@ class CreateEventViewModel @Inject constructor(
      * Если событие уже существует, обновляет его, отправляет событие [NavigateMainState], которое перенаправляет на главный экран.
      * При успешном создании отправляет событие [NavigateMainState], которое перенаправляет на главный экран.
      */
-    fun createEvent(name: String, date: String, place: String) {
+    fun createEvent(name: String, date: String, place: String, city: String, level: EventLevel?) {
         viewModelScope.launch {
-            if (name.isEmpty() || date.isEmpty() || place.isEmpty()) {
+            if (name.isEmpty() || date.isEmpty() || place.isEmpty() || city.isEmpty() || level == null) {
                 event.send(ErrorState)
             } else {
                 if (uid != null) {
-                    interactor.updateEvent(uid, name, date, place)
+                    interactor.updateEvent(uid, name, date, place, city, level)
                         .doOnSuccess {
                             event.send(NavigateMainState)
                         }
                 } else {
-                    interactor.createEvent(name, date, place)
+                    interactor.createEvent(name, date, place, city, level)
                         .doOnSuccess {
                             event.send(NavigateMainState)
                         }

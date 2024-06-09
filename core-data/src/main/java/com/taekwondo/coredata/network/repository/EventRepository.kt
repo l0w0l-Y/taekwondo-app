@@ -10,6 +10,7 @@ import com.taekwondo.coredata.network.di.IoDispatcher
 import com.taekwondo.coredata.network.entity.EventEntity
 import com.taekwondo.coredata.network.entity.EventFighterCrossRef
 import com.taekwondo.coredata.network.entity.EventJudgeCrossRef
+import com.taekwondo.coredata.network.entity.EventLevel
 import com.taekwondo.coredata.network.entity.EventMainJudgeCrossRef
 import com.taekwondo.coredata.network.entity.EventParticipants
 import com.taekwondo.coredata.network.entity.EventStatus
@@ -24,7 +25,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 interface EventRepository {
-    suspend fun createEvent(name: String, date: String, place: String): Effect<Unit>
+    suspend fun createEvent(
+        name: String,
+        date: String,
+        place: String,
+        level: EventLevel,
+        city: String
+    ): Effect<Unit>
+
     suspend fun getAllEvents(): Effect<Unit>
     suspend fun insertEventParticipants(
         uidEvent: Long,
@@ -37,7 +45,9 @@ interface EventRepository {
         uid: Long,
         name: String,
         date: String,
-        place: String
+        place: String,
+        city: String,
+        level: EventLevel
     ): Effect<Unit>
 
     suspend fun getEventParticipants(uid: Long): Effect<EventParticipants?>
@@ -64,9 +74,23 @@ class EventRepositoryImpl @Inject constructor(
 ) : EventRepository {
 
     //Создание события
-    override suspend fun createEvent(name: String, date: String, place: String): Effect<Unit> {
+    override suspend fun createEvent(
+        name: String,
+        date: String,
+        place: String,
+        level: EventLevel,
+        city: String
+    ): Effect<Unit> {
         return callDB(ioDispatcher) {
-            eventDao.insert(EventEntity(name = name, date = date, place = place))
+            eventDao.insert(
+                EventEntity(
+                    name = name,
+                    date = date,
+                    place = place,
+                    city = city,
+                    level = level
+                )
+            )
         }
     }
 
@@ -120,7 +144,9 @@ class EventRepositoryImpl @Inject constructor(
         uid: Long,
         name: String,
         date: String,
-        place: String
+        place: String,
+        city: String,
+        level: EventLevel
     ): Effect<Unit> {
         return callDB(ioDispatcher) {
             eventDao.update(
@@ -128,7 +154,9 @@ class EventRepositoryImpl @Inject constructor(
                     uid = uid,
                     name = name,
                     date = date,
-                    place = place
+                    place = place,
+                    city = city,
+                    level = level
                 )
             )
         }

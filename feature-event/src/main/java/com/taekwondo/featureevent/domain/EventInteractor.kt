@@ -1,6 +1,7 @@
 package com.taekwondo.featureevent.domain
 
 import com.taekwondo.coredata.network.Effect
+import com.taekwondo.coredata.network.entity.EventLevel
 import com.taekwondo.coredata.network.entity.EventStatus
 import com.taekwondo.coredata.network.map
 import com.taekwondo.coredata.network.model.FightModel
@@ -16,8 +17,23 @@ import javax.inject.Inject
 import com.taekwondo.featureevent.presentation.model.EventStatus as EventStatusModel
 
 interface EventInteractor {
-    suspend fun createEvent(name: String, date: String, place: String): Effect<Unit>
-    suspend fun updateEvent(uid: Long, name: String, date: String, place: String): Effect<Unit>
+    suspend fun createEvent(
+        name: String,
+        date: String,
+        place: String,
+        city: String,
+        level: EventLevel
+    ): Effect<Unit>
+
+    suspend fun updateEvent(
+        uid: Long,
+        name: String,
+        date: String,
+        place: String,
+        city: String,
+        level: EventLevel
+    ): Effect<Unit>
+
     suspend fun getAllEvents(): Effect<Unit>
     suspend fun insertEventParticipants(
         uid: Long,
@@ -51,17 +67,25 @@ class EventInteractorImpl @Inject constructor(
     private val userRepository: AuthRepository,
     private val fighterRepository: FighterRepository,
 ) : EventInteractor {
-    override suspend fun createEvent(name: String, date: String, place: String): Effect<Unit> {
-        return eventRepository.createEvent(name, date, place)
+    override suspend fun createEvent(
+        name: String,
+        date: String,
+        place: String,
+        city: String,
+        level: EventLevel
+    ): Effect<Unit> {
+        return eventRepository.createEvent(name, date, place, level, city)
     }
 
     override suspend fun updateEvent(
         uid: Long,
         name: String,
         date: String,
-        place: String
+        place: String,
+        city: String,
+        level: EventLevel
     ): Effect<Unit> {
-        return eventRepository.updateEvent(uid, name, date, place)
+        return eventRepository.updateEvent(uid, name, date, place, city, level)
     }
 
     override suspend fun getAllEvents(): Effect<Unit> {
@@ -85,6 +109,8 @@ class EventInteractorImpl @Inject constructor(
                     name = eventParticipantsEntity.event.name,
                     date = eventParticipantsEntity.event.date,
                     place = eventParticipantsEntity.event.place,
+                    city = eventParticipantsEntity.event.city,
+                    level = eventParticipantsEntity.event.level,
                     fighters = eventParticipantsEntity.fighters.map { fighter ->
                         FighterModel(
                             uid = fighter.uid,

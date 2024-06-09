@@ -15,7 +15,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
@@ -39,6 +42,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.taekwondo.corecommon.ext.observe
+import com.taekwondo.coredata.network.entity.EventLevel
 import com.taekwondo.corenavigation.MainDirection
 import com.taekwondo.coretheme.Dimen
 import com.taekwondo.coreui.compose.string
@@ -61,6 +65,8 @@ fun CreateEventScreen(
     var name by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
     var place by remember { mutableStateOf("") }
+    var city by remember { mutableStateOf("") }
+    var level by remember { mutableStateOf<EventLevel?>(null) }
     event.observe {
         when (it) {
             CreateEventViewModel.NavigateMainState -> {
@@ -79,6 +85,8 @@ fun CreateEventScreen(
                 name = it.name
                 place = it.place
                 date = it.date
+                city = it.city
+                level = it.level
             }
         }
     }
@@ -89,6 +97,10 @@ fun CreateEventScreen(
         { date = it },
         place,
         { place = it },
+        city,
+        { city = it },
+        level,
+        { level = it },
         navigationState,
         viewModel::createEvent
     )
@@ -103,8 +115,12 @@ fun CreateEventScreen(
     onDateChanged: (String) -> Unit,
     place: String,
     onPlaceChanged: (String) -> Unit,
+    city: String,
+    onCityChanged: (String) -> Unit,
+    level: EventLevel?,
+    onLevelChanged: (EventLevel) -> Unit,
     navigationState: CreateEventViewModel.ScreenType,
-    saveEvent: (String, String, String) -> Unit
+    saveEvent: (String, String, String, String, EventLevel?) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
@@ -150,7 +166,7 @@ fun CreateEventScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = Dimen.padding_20),
+            .padding(vertical = Dimen.padding_20, horizontal = Dimen.padding_24),
         verticalArrangement = Arrangement.spacedBy(Dimen.padding_8),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -169,7 +185,9 @@ fun CreateEventScreen(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
             ),
-            modifier = Modifier.padding(top = Dimen.padding_8)
+            modifier = Modifier
+                .padding(top = Dimen.padding_8)
+                .fillMaxWidth(),
         )
         OutlinedTextField(
             value = date,
@@ -182,7 +200,8 @@ fun CreateEventScreen(
                     indication = null
                 ) {
                     showDatePicker = true
-                },
+                }
+                .fillMaxWidth(),
             singleLine = true,
             shape = RoundedCornerShape(Dimen.padding_16),
             keyboardOptions = KeyboardOptions(
@@ -194,7 +213,19 @@ fun CreateEventScreen(
                 disabledLabelColor = Color.Black,
                 disabledBorderColor = Color.Black,
                 disabledPlaceholderColor = Color.Black,
-            )
+            ),
+        )
+        OutlinedTextField(
+            value = city,
+            onValueChange = { onCityChanged(it) },
+            label = { Text(string(id = R.string.text_field_city)) },
+            singleLine = true,
+            shape = RoundedCornerShape(Dimen.padding_16),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = place,
@@ -206,11 +237,71 @@ fun CreateEventScreen(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done
             ),
+            modifier = Modifier.fillMaxWidth()
         )
-        Button(onClick = { saveEvent(name, date, place) }) {
+        DropBox(
+            title = string(id = R.string.text_field_event_level),
+            itemList = EventLevel.values().toList(),
+            selected = level,
+            onSelected = onLevelChanged,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Button(onClick = { saveEvent(name, date, place, city, level) }) {
             when (navigationState) {
                 CreateEventViewModel.Update -> Text(string(id = R.string.button_update_event))
                 CreateEventViewModel.Create -> Text(string(id = R.string.button_save_event))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DropBox(
+    title: String,
+    itemList: List<EventLevel>,
+    selected: EventLevel?,
+    onSelected: (EventLevel) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+    Box(modifier.fillMaxWidth()) {
+        ExposedDropdownMenuBox(
+            expanded = isExpanded,
+            onExpandedChange = { isExpanded = !isExpanded },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            OutlinedTextField(
+                value = selected?.value ?: "",
+                onValueChange = {},
+                readOnly = true,
+                placeholder = { Text(title) },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = isExpanded
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor(),
+                singleLine = true,
+                shape = RoundedCornerShape(Dimen.padding_16),
+            )
+            ExposedDropdownMenu(
+                expanded = isExpanded,
+                onDismissRequest = { isExpanded = false }
+            ) {
+                itemList.forEach { item ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(item.value)
+                        },
+                        onClick = {
+                            onSelected(item)
+                            isExpanded = false
+                        }
+                    )
+                }
             }
         }
     }
