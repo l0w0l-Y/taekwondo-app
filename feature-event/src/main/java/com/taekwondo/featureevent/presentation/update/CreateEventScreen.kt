@@ -49,6 +49,7 @@ import com.taekwondo.coreui.compose.string
 import com.taekwondo.featureevent.R
 import kotlinx.coroutines.flow.receiveAsFlow
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -125,7 +126,12 @@ fun CreateEventScreen(
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
         override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-            return utcTimeMillis >= System.currentTimeMillis()
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+            return utcTimeMillis >= calendar.timeInMillis
         }
     })
     val interactionSource = remember { MutableInteractionSource() }
